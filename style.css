@@ -1,0 +1,481 @@
+/* PALETA DE COLORES INSTITUCIONAL (Consejos y Colegios Técnicos) */
+:root {
+    --primary-color: #1e3a8a;    /* Azul Institucional / Jurídico */
+    --secondary-color: #475569;  /* Gris Cemento de construcción */
+    --accent-color: #0284c7;     /* Azul Técnico / Planos */
+    --bg-app: #f8fafc;           /* Fondo gris claro limpio */
+    --bg-panel: #ffffff;         /* Paneles blancos puros */
+    --text-dark: #0f172a;        /* Texto de alta legibilidad */
+    --text-muted: #64748b;       /* Subtítulos e indicaciones */
+    --border-light: #e2e8f0;     /* Líneas divisorias sutiles */
+    --success-color: #16a34a;    /* Estado aprobado / visado */
+    --warning-color: #d97706;    /* Alertas de seguros/plazos */
+}
+
+/* RESET GENERAL Y ACCESIBILIDAD */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+    background-color: var(--bg-app);
+    color: var(--text-dark);
+    line-height: 1.5;
+    padding-top: 90px; /* Previene solapamiento con la cabecera fija */
+}
+
+/* BARRA DE NAVEGACIÓN SUPERIOR FIJA */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--primary-color);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.header-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.brand i {
+    font-size: 1.8rem;
+    color: var(--accent-color);
+}
+
+.brand h1 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+.brand span {
+    font-size: 0.75rem;
+    color: var(--border-light);
+    display: block;
+}
+
+/* Menú táctil para visualización ágil en teléfonos */
+.main-nav {
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding-bottom: 5px;
+}
+
+/* Ocultar barra de scroll nativa en el menú superior */
+.main-nav::-webkit-scrollbar {
+    display: none;
+}
+
+.nav-item {
+    color: var(--border-light);
+    text-decoration: none;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.nav-item:hover, .nav-item.active {
+    background-color: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+/* CONTENEDOR CENTRAL DE LA APLICACIÓN */
+.main-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 15px;
+}
+
+/* PANELES DE CONTROL */
+.panel-control {
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-light);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.panel-header {
+    border-bottom: 2px solid var(--bg-app);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.panel-header h2 {
+    font-size: 1.25rem;
+    color: var(--primary-color);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.panel-header p {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* SELECTOR DE PERFILES */
+.perfil-selector {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.btn-perfil {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-light);
+    border-radius: 6px;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.btn-perfil i {
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+}
+
+.btn-perfil strong {
+    display: block;
+    font-size: 0.85rem;
+    color: var(--text-dark);
+}
+
+.btn-perfil span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.btn-perfil.active {
+    border-color: var(--primary-color);
+    background-color: rgba(30, 58, 138, 0.03);
+}
+
+.btn-perfil.active i {
+    color: var(--primary-color);
+}
+
+/* COMPONENTES DE FORMULARIO ESTILIZADOS */
+.form-institucional {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.form-section-title {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--secondary-color);
+    border-bottom: 1px solid var(--border-light);
+    padding-bottom: 4px;
+    margin-top: 10px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--secondary-color);
+}
+
+.input-icon-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon-wrapper i {
+    position: absolute;
+    left: 12px;
+    color: var(--text-muted);
+}
+
+input, select {
+    width: 100%;
+    padding: 10px 10px 10px 35px; /* Margen para alojar el icono izquierdo */
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    background-color: var(--bg-app);
+    color: var(--text-dark);
+    font-size: 0.95rem;
+}
+
+/* Ajustes de espaciado en grillas complejas */
+.form-grid-3 input, .form-grid-3 select {
+    padding-left: 12px;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+/* BOTONERÍA PROFESIONAL */
+.form-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 15px;
+}
+
+.btn-submit {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.btn-submit:hover {
+    background-color: #172554;
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--secondary-color);
+    border: 1px solid var(--border-light);
+    padding: 12px 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/* SEGUIMIENTO DE AUDITORÍAS Y METADATOS */
+.meta-expediente {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.badge {
+    background-color: var(--bg-app);
+    border: 1px solid var(--border-light);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-success {
+    background-color: rgba(22, 163, 74, 0.1);
+    border-color: var(--success-color);
+    color: var(--success-color);
+}
+
+.progreso-legal-wrapper {
+    background-color: var(--bg-app);
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+    margin-bottom: 20px;
+}
+
+.progreso-legal-header {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-bottom: 6px;
+}
+
+.bar-background {
+    height: 8px;
+    background-color: var(--border-light);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background-color: var(--accent-color);
+}
+
+/* LÍNEA DE FLUJO TÉCNICO (WORKFLOW) */
+.workflow {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: relative;
+}
+
+.workflow-step {
+    display: flex;
+    gap: 15px;
+    position: relative;
+}
+
+.step-icon {
+    width: 36px;
+    height: 36px;
+    background-color: var(--bg-app);
+    border: 2px solid var(--border-light);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    z-index: 2;
+}
+
+.step-content {
+    flex: 1;
+    background-color: var(--bg-app);
+    padding: 12px;
+    border-radius: 6px;
+    border: 1px solid var(--border-light);
+}
+
+.step-content h3 {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.step-content p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* Dinámica de estados del legajo técnico */
+.workflow-step.completado .step-icon {
+    border-color: var(--success-color);
+    color: var(--success-color);
+    background-color: rgba(22, 163, 74, 0.05);
+}
+
+.workflow-step.en-proceso .step-icon {
+    border-color: var(--warning-color);
+    color: var(--warning-color);
+    background-color: rgba(217, 119, 6, 0.05);
+}
+
+.document-badge {
+    margin-top: 8px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #ffffff;
+    border: 1px solid var(--border-light);
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+}
+
+.txt-success { 
+    color: var(--success-color); 
+    font-weight: 600; 
+}
+
+/* GRIDS DEL MARCO LEGAL DE CONSULTA */
+.legal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.legal-card {
+    border: 1px solid var(--border-light);
+    background-color: var(--bg-app);
+    border-radius: 6px;
+    padding: 15px;
+}
+
+.legal-card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    color: var(--primary-color);
+}
+
+.legal-card-header i { font-size: 1.2rem; }
+.legal-card-header h3 { font-size: 0.95rem; font-weight: 600; }
+.legal-card p { font-size: 0.8rem; color: var(--text-muted); }
+
+/* FOOTER INSTITUCIONAL */
+.app-footer {
+    background-color: var(--secondary-color);
+    color: white;
+    font-size: 0.75rem;
+    padding: 15px;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+/* RESPONSIVE DESIGN AVANZADO (Escritorio y Tablets) */
+@media (min-width: 768px) {
+    .header-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .main-nav {
+        overflow-x: visible;
+    }
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .legal-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}

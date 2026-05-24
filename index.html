@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIGIL-MMO - Sistema de Gestión Legal y Registral</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <header class="app-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-gavel"></i>
+                <div>
+                    <h1>SIGIL-MMO</h1>
+                    <span>Sistema de Gestión Integral Legal </span>
+                </div>
+            </div>
+            <nav class="main-nav">
+                <a href="#autenticacion" class="nav-item active"><i class="fa-solid fa-id-card"></i>
+                    <span>Autenticación</span></a>
+                <a href="#expedientes" class="nav-item"><i class="fa-solid fa-folder-open"></i> <span>Legajos</span></a>
+                <a href="#contratos" class="nav-item"><i class="fa-solid fa-file-contract"></i>
+                    <span>Contratos</span></a>
+                <a href="#marco-legal" class="nav-item"><i class="fa-solid fa-book"></i> <span>Marco Legal</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+
+        <section id="autenticacion" class="panel-control">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-lock"></i> Acceso Seguro al Sistema Registral</h2>
+                <p>El ingreso de datos confidenciales de comitentes está protegido bajo normativas de secreto
+                    profesional.</p>
+            </div>
+
+            <div class="perfil-selector">
+                <button type="button" class="btn-perfil active">
+                    <i class="fa-solid fa-user-tie"></i>
+                    <div>
+                        <strong>Profesional Matriculado</strong>
+                        <span>MMO / Técnicos</span>
+                    </div>
+                </button>
+                <button type="button" class="btn-perfil">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <div>
+                        <strong>Comitente Autorizado</strong>
+                        <span>Consulta de Legajo</span>
+                    </div>
+                </button>
+            </div>
+
+            <form class="form-institucional">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="matricula">Matrícula Profesional o DNI</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-id-badge"></i>
+                            <input type="text" id="matricula" placeholder="Ej: T-45321 o DNI" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Clave de Acceso / Nº Legajo</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-key"></i>
+                            <input type="password" id="password" placeholder="••••••••" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Validar Credenciales <i
+                            class="fa-solid fa-chevron-right"></i></button>
+                </div>
+            </form>
+        </section>
+
+        <section id="expedientes" class="panel-control">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-folder-open"></i> Estado de Legajos Técnicos</h2>
+                <p>Seguimiento en tiempo real de aprobaciones y visados municipales o colegiados.</p>
+            </div>
+
+            <div class="meta-expediente">
+                <span class="badge badge-success"><i class="fa-solid fa-hashtag"></i> Expediente Nº 4589/2026</span>
+                <span class="badge"><i class="fa-regular fa-calendar"></i> Ingreso: 12/05/2026</span>
+                <span class="badge"><i class="fa-solid fa-map-location-dot"></i> Lote 45, Mza 12 - Centro</span>
+            </div>
+
+            <div class="progreso-legal-wrapper">
+                <div class="progreso-legal-header">
+                    <strong>Avance del Trámite</strong>
+                    <span>75% Completado</span>
+                </div>
+                <div class="bar-background">
+                    <div class="bar-fill" style="width: 75%;"></div>
+                </div>
+            </div>
+
+            <div class="workflow">
+                <div class="workflow-step completado">
+                    <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                    <div class="step-content">
+                        <h3>1. Ingreso de Anteproyecto</h3>
+                        <p>Documentación inicial subida y revisada por el área técnica.</p>
+                        <div class="document-badge txt-success">
+                            <i class="fa-solid fa-file-pdf"></i> Planos_Preliminares.pdf
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step completado">
+                    <div class="step-icon"><i class="fa-solid fa-check"></i></div>
+                    <div class="step-content">
+                        <h3>2. Visado del Colegio de Técnicos</h3>
+                        <p>Aportes jubilatorios y visado colegial aprobados.</p>
+                        <div class="document-badge txt-success">
+                            <i class="fa-solid fa-certificate"></i> Certificado_Visado_4421.pdf
+                        </div>
+                    </div>
+                </div>
+
+                <div class="workflow-step en-proceso">
+                    <div class="step-icon"><i class="fa-solid fa-spinner"></i></div>
+                    <div class="step-content">
+                        <h3>3. Aprobación Municipal (Obras Privadas)</h3>
+                        <p>En revisión por el municipio. Esperando firmas finales.</p>
+                    </div>
+                </div>
+
+                <div class="workflow-step">
+                    <div class="step-icon"><i class="fa-solid fa-print"></i></div>
+                    <div class="step-content">
+                        <h3>4. Permiso de Obra Emitido</h3>
+                        <p>Cartón de obra listo para imprimir y exhibir en el frente.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contratos" class="panel-control">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-file-contract"></i> Registro de Contratos Profesionales</h2>
+                <p>Generación de nuevos contratos y encomiendas de tareas profesionales.</p>
+            </div>
+
+            <form class="form-institucional" onsubmit="event.preventDefault();">
+                <h4 class="form-section-title">Datos del Comitente y Obra</h4>
+
+                <div class="form-grid-3">
+                    <div class="form-group">
+                        <label for="dni-comitente">DNI / CUIT Comitente</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-address-card"></i>
+                            <input type="text" id="dni-comitente" value="20-34567890-1" disabled>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo-obra">Tipo de Tarea</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-trowel-bricks"></i>
+                            <select id="tipo-obra">
+                                <option>Proyecto y Dirección</option>
+                                <option>Dirección Ejecutiva</option>
+                                <option>Medición y Subsistencia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="superficie">Superficie a Construir (m²)</label>
+                        <div class="input-icon-wrapper">
+                            <i class="fa-solid fa-ruler-combined"></i>
+                            <input type="number" id="superficie" value="120" readonly>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary"><i class="fa-solid fa-calculator"></i> Calcular
+                        Honorarios</button>
+                    <button type="submit" class="btn-submit"><i class="fa-solid fa-file-signature"></i> Generar Contrato
+                        PDF</button>
+                </div>
+            </form>
+        </section>
+
+        <section id="marco-legal" class="panel-control">
+            <div class="panel-header">
+                <h2><i class="fa-solid fa-book"></i> Marco Legal y Normativas</h2>
+                <p>Acceso rápido a normativas, leyes y reglamentos de edificación vigentes.</p>
+            </div>
+
+            <div class="legal-grid">
+                <div class="legal-card">
+                    <div class="legal-card-header">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        <h3>Ley de Colegiación Nº 10416</h3>
+                    </div>
+                    <p>Reglamentación del ejercicio profesional de Maestros Mayores de Obra y Técnicos.</p>
+                </div>
+
+                <div class="legal-card">
+                    <div class="legal-card-header">
+                        <i class="fa-solid fa-city"></i>
+                        <h3>Código de Edificación Municipal</h3>
+                    </div>
+                    <p>Ordenanza vigente sobre retiros, FOS, FOT y normativas de habitabilidad.</p>
+                </div>
+
+                <div class="legal-card">
+                    <div class="legal-card-header">
+                        <i class="fa-solid fa-coins"></i>
+                        <h3>Tabla de Honorarios Mínimos</h3>
+                    </div>
+                    <p>Resolución actual con el valor referencial del metro cuadrado y coeficientes.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="app-footer">
+        <div class="footer-container">
+            <p>&copy; 2026 SIGIL-MMO. Sistema Integrado para Maestros Mayores de Obras.</p>
+            <p>Versión 1.0.4 | Conectado de forma segura.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Pequeño script para demostrar interactividad en la interfaz
+        document.querySelectorAll('.btn-perfil').forEach(btn => {
+            btn.addEventListener('click', function () {
+                document.querySelectorAll('.btn-perfil').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            nav.addEventListener('click', function (e) {
+                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
