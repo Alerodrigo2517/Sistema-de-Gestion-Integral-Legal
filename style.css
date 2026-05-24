@@ -227,7 +227,7 @@ label {
     color: var(--text-muted);
 }
 
-input, select {
+input[type="text"], input[type="password"], input[type="number"], select {
     width: 100%;
     padding: 10px 10px 10px 35px; /* Margen para alojar el icono izquierdo */
     border: 1px solid var(--border-light);
@@ -238,15 +238,28 @@ input, select {
 }
 
 /* Ajustes de espaciado en grillas complejas */
-.form-grid-3 input, .form-grid-3 select {
-    padding-left: 12px;
+.form-grid-3 input[type="text"], 
+.form-grid-3 input[type="password"], 
+.form-grid-3 input[type="number"], 
+.form-grid-3 select {
+    padding-left: 35px;
 }
 
-input:focus, select:focus {
+input[type="text"]:focus, 
+input[type="password"]:focus, 
+input[type="number"]:focus, 
+select:focus {
     outline: none;
     border-color: var(--accent-color);
     background-color: #ffffff;
     box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1);
+}
+
+/* Checkboxes */
+input[type="checkbox"] {
+    accent-color: var(--primary-color);
+    width: auto;
+    cursor: pointer;
 }
 
 /* BOTONERÍA PROFESIONAL */
@@ -455,8 +468,77 @@ input:focus, select:focus {
     gap: 5px;
 }
 
-/* RESPONSIVE DESIGN AVANZADO (Escritorio y Tablets) */
-@media (min-width: 768px) {
+/* RESPONSIVE DESIGN AVANZADO */
+
+/* Dispositivos Móviles (hasta 767px) */
+@media (max-width: 767px) {
+    body {
+        padding-top: 110px; /* Más espacio para la cabecera en móvil */
+    }
+    .brand {
+        justify-content: center;
+        text-align: center;
+    }
+    .main-nav {
+        justify-content: flex-start;
+        padding-bottom: 10px;
+    }
+    .perfil-selector {
+        flex-direction: column;
+    }
+    .form-actions {
+        flex-direction: column;
+    }
+    .btn-submit, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+    }
+    .meta-expediente {
+        flex-direction: column;
+        gap: 5px;
+    }
+    .workflow-step {
+        flex-direction: column;
+        gap: 8px;
+        padding-left: 10px;
+        border-left: 2px solid var(--border-light);
+    }
+    .step-icon {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 5px;
+        margin-left: -28px; /* Para superponer a la línea */
+    }
+}
+
+/* Tablets (768px a 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .header-container {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .main-nav {
+        overflow-x: visible;
+    }
+    .form-grid-3 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+    .legal-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Escritorio (1024px en adelante) */
+@media (min-width: 1024px) {
     .header-container {
         flex-direction: row;
         justify-content: space-between;
@@ -479,3 +561,51 @@ input:focus, select:focus {
         grid-template-columns: repeat(3, 1fr);
     }
 }
+
+/* LOGIN PROFESIONAL */
+.login-panel {
+    max-width: 450px;
+    margin: 60px auto;
+    padding: 30px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    border: none;
+    border-top: 4px solid var(--primary-color);
+    border-radius: 8px;
+}
+
+@media (max-width: 767px) {
+    .login-panel {
+        margin: 20px 10px;
+        padding: 20px;
+    }
+}
+
+.login-panel .panel-header {
+    text-align: center;
+    border-bottom: none;
+    margin-bottom: 25px;
+}
+
+.login-panel .panel-header h2 {
+    justify-content: center;
+    font-size: 1.4rem;
+}
+
+.login-panel .btn-submit {
+    width: 100%;
+    justify-content: center;
+    padding: 14px;
+    font-size: 1rem;
+    margin-top: 10px;
+    box-shadow: 0 4px 6px rgba(30, 58, 138, 0.2);
+}
+
+.login-panel .btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px rgba(30, 58, 138, 0.3);
+}
+
+.login-panel .form-row {
+    display: flex;
+    flex-direction: column;
+}
