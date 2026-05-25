@@ -30,7 +30,7 @@
                         alt="Perfil" class="profile-pic" id="header-profile-pic">
                     <span class="user-name" id="header-user-name">RODRIGO AGUIRRE</span>
                 </div>
-                <button class="btn-icon"><i class="fa-solid fa-cog"></i></button>
+                <button class="btn-icon" id="btn-nav-configuracion"><i class="fa-solid fa-cog"></i></button>
             </div>
         </div>
     </header>
@@ -49,12 +49,12 @@
                     </div>
                 </div>
                 <div class="sidebar-group">
-                    <a href="#cuenta" class="sidebar-item group-title"><i class="fa-solid fa-file-invoice-dollar"></i>
-                        <span>Cuenta</span> <i class="fa-solid fa-chevron-down arrow"></i></a>
+                    <a href="#cuenta" class="sidebar-item"><i class="fa-solid fa-file-invoice-dollar"></i>
+                        <span>Cuenta</span></a>
                 </div>
                 <div class="sidebar-group">
-                    <a href="#perfil" class="sidebar-item group-title"><i class="fa-solid fa-user"></i>
-                        <span>Perfil</span> <i class="fa-solid fa-chevron-down arrow"></i></a>
+                    <a href="#perfil" id="nav-perfil" class="sidebar-item"><i class="fa-solid fa-user"></i>
+                        <span>Perfil</span></a>
                 </div>
                 <a href="#marco-legal" id="nav-marco-legal" class="sidebar-item"><i class="fa-solid fa-book"></i>
                     <span>Marco Legal</span></a>
@@ -534,40 +534,196 @@
                 </form>
             </section>
 
-            <section id="marco-legal" class="panel-control">
-                <div class="panel-header">
-                    <h2><i class="fa-solid fa-book"></i> Marco Legal y Normativas</h2>
-                    <p>Acceso rápido a normativas, leyes y reglamentos de edificación vigentes.</p>
+            <section id="marco-legal" class="panel-control" style="display:none;">
+                <div class="view-header">
+                    <h2><i class="fa-solid fa-file-signature"></i> Generador de Actas y Libro de Órdenes</h2>
                 </div>
 
-                <div class="legal-grid">
-                    <div class="legal-card">
-                        <div class="legal-card-header">
-                            <i class="fa-solid fa-scale-balanced"></i>
-                            <h3>Ley de Colegiación Nº 10416</h3>
+                <div class="card-form" style="max-width: 800px; margin: 0 auto;">
+                    <form id="form-actas">
+                        <div class="form-section">
+                            <h4 class="form-section-title">1. Selección de Documento</h4>
+                            <div class="form-group-vertical">
+                                <label>Tipo de Acta</label>
+                                <select id="acta-tipo" class="input-standard" required>
+                                    <option value="" disabled selected>Seleccione el tipo de acta...</option>
+                                    <option value="ACTA DE INICIO DE OBRA">ACTA DE INICIO DE OBRA</option>
+                                    <option value="ACTA DE REPLANTEO">ACTA DE REPLANTEO</option>
+                                    <option value="ACTA DE PARALIZACION DE OBRA">ACTA DE PARALIZACION DE OBRA</option>
+                                    <option value="ACTA DE REINICIO DE OBRA">ACTA DE REINICIO DE OBRA</option>
+                                    <option value="ACTA DE RECEPCION PROVISORIA">ACTA DE RECEPCION PROVISORIA</option>
+                                    <option value="ACTA DE RECEPCION DEFINITIVA">ACTA DE RECEPCION DEFINITIVA</option>
+                                    <option value="ACTA DE DESLIGAMIENTO">ACTA DE DESLIGAMIENTO</option>
+                                    <option value="ACTA DE ESTADO DE OBRA">ACTA DE ESTADO DE OBRA</option>
+                                    <option value="ACTA DE PRORROGA DE CONTRATO">ACTA DE PRORROGA DE CONTRATO</option>
+                                    <option value="ORDEN DE SERVICIO">ORDEN DE SERVICIO</option>
+                                </select>
+                            </div>
                         </div>
-                        <p>Reglamentación del ejercicio profesional de Maestros Mayores de Obra y Técnicos.</p>
-                    </div>
 
-                    <div class="legal-card">
-                        <div class="legal-card-header">
-                            <i class="fa-solid fa-city"></i>
-                            <h3>Código de Edificación Municipal</h3>
-                        </div>
-                        <p>Ordenanza vigente sobre retiros, FOS, FOT y normativas de habitabilidad.</p>
-                    </div>
+                        <div class="form-section">
+                            <h4 class="form-section-title">2. Datos de Referencia</h4>
+                            <div class="form-grid">
+                                <div class="form-group-vertical">
+                                    <label>Ubicación (Calle y N°)</label>
+                                    <input type="text" id="acta-calle" class="input-standard" placeholder="Ej: San Martín 123" required>
+                                </div>
+                                <div class="form-group-vertical">
+                                    <label>Localidad / Partido</label>
+                                    <input type="text" id="acta-localidad" class="input-standard" placeholder="Ej: Mar del Plata" required>
+                                </div>
+                            </div>
+                            
+                            <div class="form-grid-3">
+                                <div class="form-group-vertical">
+                                    <label>Nomenclatura (Circ. Secc.)</label>
+                                    <input type="text" id="acta-nomenclatura" class="input-standard" placeholder="Ej: I. B.">
+                                </div>
+                                <div class="form-group-vertical">
+                                    <label>Manzana / Parcela</label>
+                                    <input type="text" id="acta-parcela" class="input-standard" placeholder="Ej: 12 / 4a">
+                                </div>
+                                <div class="form-group-vertical">
+                                    <label>Fecha de Contrato</label>
+                                    <input type="date" id="acta-fecha-contrato" class="input-standard">
+                                </div>
+                            </div>
 
-                    <div class="legal-card">
-                        <div class="legal-card-header">
-                            <i class="fa-solid fa-coins"></i>
-                            <h3>Tabla de Honorarios Mínimos</h3>
+                            <div class="form-grid">
+                                <div class="form-group-vertical">
+                                    <label>Expediente Municipal N°</label>
+                                    <input type="text" id="acta-exp-muni" class="input-standard" placeholder="Opcional">
+                                </div>
+                                <div class="form-group-vertical">
+                                    <label>Visado CAPBA N°</label>
+                                    <input type="text" id="acta-visado" class="input-standard" placeholder="Opcional">
+                                </div>
+                            </div>
                         </div>
-                        <p>Resolución actual con el valor referencial del metro cuadrado y coeficientes.</p>
-                    </div>
+
+                        <div class="form-section" id="acta-orden-extra" style="display:none;">
+                            <h4 class="form-section-title">3. Detalle de la Orden</h4>
+                            <div class="form-group-vertical">
+                                <label>Se comunica a lo siguiente:</label>
+                                <textarea id="acta-texto-orden" class="input-standard" rows="4" placeholder="Redacte la instrucción, advertencia u orden de servicio..."></textarea>
+                            </div>
+                        </div>
+
+                        <div class="card-actions">
+                            <button type="submit" class="btn-primary btn-large" id="btn-submit-acta" style="width: 100%;">
+                                <i class="fa-solid fa-file-pdf"></i> Generar Acta PDF y Anexar al Legajo
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </section>
 
-        </main>
+    <!-- VISTA PERFIL -->
+    <section id="perfil" class="panel-control" style="display:none;">
+        <div class="view-header">
+            <h2><i class="fa-solid fa-user"></i> Perfil de Usuario</h2>
+        </div>
+        <div class="perfil-card">
+            <div class="perfil-avatar-large">
+                <img id="perfil-img-large" src="" alt="Avatar">
+            </div>
+            <div class="perfil-info">
+                <h3 id="perfil-nombre-large">Cargando...</h3>
+                <span class="badge badge-success" id="perfil-rol-large">Rol</span>
+            </div>
+        </div>
+        <div class="card-form" style="max-width: 100%; margin-top: 20px;">
+            <h4 class="form-section-title">Datos Personales y Profesionales</h4>
+            <div class="form-grid-3">
+                <div class="form-group-vertical">
+                    <label>DNI / CUIT</label>
+                    <input type="text" class="input-standard" value="20-34567890-1">
+                </div>
+                <div class="form-group-vertical">
+                    <label>Correo Electrónico</label>
+                    <input type="email" class="input-standard" value="usuario@sigilmmo.com">
+                </div>
+                <div class="form-group-vertical">
+                    <label>Teléfono</label>
+                    <input type="text" class="input-standard" value="+54 9 223 456-7890">
+                </div>
+                <div class="form-group-vertical">
+                    <label>Matrícula / Legajo</label>
+                    <input type="text" class="input-standard" id="perfil-matricula" readonly>
+                </div>
+                <div class="form-group-vertical">
+                    <label>Domicilio</label>
+                    <input type="text" class="input-standard" value="Av. San Martín 1234, Ciudad">
+                </div>
+            </div>
+            <div class="card-actions">
+                <button class="btn-primary" id="btn-save-perfil">Guardar Cambios</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- VISTA CONFIGURACIÓN -->
+    <section id="configuracion" class="panel-control" style="display:none;">
+        <div class="view-header">
+            <h2><i class="fa-solid fa-cog"></i> Configuración del Sistema</h2>
+        </div>
+        <div class="config-grid">
+            <div class="card-form" style="margin: 0; max-width: 100%;">
+                <h4 class="form-section-title">Preferencias Generales</h4>
+                <div class="config-item">
+                    <div class="config-info">
+                        <strong>Notificaciones por Correo</strong>
+                        <p>Recibir correos sobre cambios de estado en trámites.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="config-item">
+                    <div class="config-info">
+                        <strong>Alertas de Vencimiento</strong>
+                        <p>Avisos sobre plazos de obras y visados.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" checked>
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+                <div class="config-item">
+                    <div class="config-info">
+                        <strong>Modo Oscuro</strong>
+                        <p>Cambiar apariencia visual del sistema.</p>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="theme-toggle">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="card-form" style="margin: 0; max-width: 100%;">
+                <h4 class="form-section-title">Seguridad</h4>
+                <div class="form-group-vertical">
+                    <label>Contraseña Actual</label>
+                    <input type="password" class="input-standard" placeholder="••••••••">
+                </div>
+                <div class="form-group-vertical">
+                    <label>Nueva Contraseña</label>
+                    <input type="password" class="input-standard" placeholder="••••••••">
+                </div>
+                <div class="form-group-vertical">
+                    <label>Confirmar Nueva Contraseña</label>
+                    <input type="password" class="input-standard" placeholder="••••••••">
+                </div>
+                <div class="card-actions">
+                    <button class="btn-secondary" id="btn-change-password">Actualizar Contraseña</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    </main>
     </div> <!-- End app-layout -->
 
     <!-- MODAL ACTUALIZAR TRÁMITE -->

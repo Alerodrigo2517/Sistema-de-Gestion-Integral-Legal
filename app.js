@@ -48,9 +48,11 @@ const sections = {
     autenticacion: document.getElementById('autenticacion'),
     expedientes: document.getElementById('expedientes'),
     contratos: document.getElementById('contratos'),
-    marcoLegal: document.getElementById('marco-legal'),
+    'marco-legal': document.getElementById('marco-legal'),
     nuevoLegajo: document.getElementById('nuevo-legajo'),
-    dashboardLegajo: document.getElementById('dashboard-legajo')
+    dashboardLegajo: document.getElementById('dashboard-legajo'),
+    perfil: document.getElementById('perfil'),
+    configuracion: document.getElementById('configuracion')
 };
 
 const navLinks = {
@@ -120,6 +122,24 @@ function initApp() {
     // Envío del formulario de Contratos
     formContratos.addEventListener('submit', handleContratoSubmit);
 
+    // Envío del formulario de Actas
+    const formActas = document.getElementById('form-actas');
+    if (formActas) {
+        formActas.addEventListener('submit', handleActaSubmit);
+    }
+    
+    const actaTipo = document.getElementById('acta-tipo');
+    const actaOrdenExtra = document.getElementById('acta-orden-extra');
+    if (actaTipo && actaOrdenExtra) {
+        actaTipo.addEventListener('change', (e) => {
+            if (e.target.value === 'ORDEN DE SERVICIO') {
+                actaOrdenExtra.style.display = 'block';
+            } else {
+                actaOrdenExtra.style.display = 'none';
+            }
+        });
+    }
+
     // Eventos de Navegación del Sidebar
     document.querySelectorAll('.sidebar-subitem, .sidebar-item:not(.group-title)').forEach(nav => {
         nav.addEventListener('click', function (e) {
@@ -132,6 +152,8 @@ function initApp() {
                     showSection(targetId);
                 } else if (targetId === 'home') {
                     showSection('expedientes'); // fallback
+                } else if (targetId === 'cuenta') {
+                    showToast('La sección Cuenta se encuentra en desarrollo.', 'warning');
                 }
 
                 // Actualizar active state
@@ -140,6 +162,11 @@ function initApp() {
                 // Si es un subitem, activar también su padre
                 if (this.classList.contains('sidebar-subitem')) {
                     this.closest('.sidebar-group').querySelector('.group-title').classList.add('active');
+                }
+
+                // Cerrar sidebar en mobile al navegar
+                if (window.innerWidth <= 767 && !this.classList.contains('group-title')) {
+                    document.getElementById('sidebar').classList.remove('open');
                 }
             }
         });
@@ -150,9 +177,12 @@ function initApp() {
     const sidebar = document.getElementById('sidebar');
     if (btnToggleSidebar) {
         btnToggleSidebar.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
             if (window.innerWidth <= 767) {
                 sidebar.classList.toggle('open');
+                sidebar.classList.remove('collapsed');
+            } else {
+                sidebar.classList.toggle('collapsed');
+                sidebar.classList.remove('open');
             }
         });
     }
@@ -193,6 +223,60 @@ function initApp() {
     if (btnVolverDashboard) {
         btnVolverDashboard.addEventListener('click', () => {
             showSection('expedientes');
+        });
+    }
+
+    const btnNavConfiguracion = document.getElementById('btn-nav-configuracion');
+    if (btnNavConfiguracion) {
+        btnNavConfiguracion.addEventListener('click', () => {
+            showSection('configuracion');
+        });
+    }
+
+    const btnSavePerfil = document.getElementById('btn-save-perfil');
+    if (btnSavePerfil) {
+        btnSavePerfil.addEventListener('click', () => {
+            showToast("Datos de perfil guardados correctamente.", "success");
+        });
+    }
+
+    const btnChangePassword = document.getElementById('btn-change-password');
+    if (btnChangePassword) {
+        btnChangePassword.addEventListener('click', () => {
+            showToast("La contraseña ha sido actualizada con éxito.", "success");
+        });
+    }
+
+    const btnFirmarOrden = document.getElementById('btn-firmar-orden');
+    const txtOrdenDigital = document.getElementById('texto-orden-digital');
+    if (btnFirmarOrden && txtOrdenDigital) {
+        btnFirmarOrden.addEventListener('click', () => {
+            const val = txtOrdenDigital.value.trim();
+            if (val === '') {
+                showToast("Por favor, redacte la orden antes de firmar.", "warning");
+                return;
+            }
+            showToast("Orden firmada y guardada en el Libro de Órdenes Digital.", "success");
+            txtOrdenDigital.value = '';
+        });
+    }
+
+    // Actas downloads mock
+    document.querySelectorAll('.actas-downloads button').forEach(btn => {
+        btn.addEventListener('click', () => {
+            showToast("Iniciando descarga del documento...", "success");
+        });
+    });
+
+    // Theme toggle mock
+    const themeToggle = document.getElementById('theme-toggle');
+    if (themeToggle) {
+        themeToggle.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                showToast("Modo oscuro activado (Simulación)", "success");
+            } else {
+                showToast("Modo claro activado", "success");
+            }
         });
     }
 
@@ -261,8 +345,15 @@ function setupDashboard() {
     document.getElementById('header-right').style.display = 'flex';
     
     // Configurar nombre y avatar de usuario
+    const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(loggedUser.name)}&background=0284c7&color=fff&rounded=true`;
     document.getElementById('header-user-name').textContent = loggedUser.name.toUpperCase();
-    document.getElementById('header-profile-pic').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(loggedUser.name)}&background=0284c7&color=fff&rounded=true`;
+    document.getElementById('header-profile-pic').src = avatarUrl;
+    
+    // Vista Perfil grande
+    document.getElementById('perfil-img-large').src = avatarUrl;
+    document.getElementById('perfil-nombre-large').textContent = loggedUser.name;
+    document.getElementById('perfil-rol-large').textContent = loggedUser.role === 'mmo' ? 'Profesional Matriculado' : 'Comitente';
+    document.getElementById('perfil-matricula').value = loggedUser.user;
 
     if (loggedUser.role === 'mmo') {
         document.getElementById('nav-contratos').style.display = 'block';
@@ -363,6 +454,144 @@ function renderExpedientes() {
         divExp.appendChild(wfDiv);
         expedientesContainer.appendChild(divExp);
     });
+}
+
+// Lógica de Creación de Actas
+async function handleActaSubmit(e) {
+    e.preventDefault();
+
+    const btnSubmit = document.getElementById('btn-submit-acta');
+    const originalText = btnSubmit.innerHTML;
+    btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando PDF...';
+    btnSubmit.disabled = true;
+
+    try {
+        const tipoActa = document.getElementById('acta-tipo').value;
+        const calle = document.getElementById('acta-calle').value;
+        const localidad = document.getElementById('acta-localidad').value;
+        const nomenclatura = document.getElementById('acta-nomenclatura').value || 'S/D';
+        const parcela = document.getElementById('acta-parcela').value || 'S/D';
+        const fechaContrato = document.getElementById('acta-fecha-contrato').value || 'S/D';
+        const expMuni = document.getElementById('acta-exp-muni').value || 'S/D';
+        const visado = document.getElementById('acta-visado').value || 'S/D';
+        const textoOrden = document.getElementById('acta-texto-orden').value || '';
+
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        let yPos = 20;
+        
+        // Título Principal
+        doc.setFontSize(16);
+        doc.setFont("helvetica", "bold");
+        doc.text(tipoActa, 105, yPos, { align: 'center' });
+        yPos += 15;
+        
+        // Datos de Obra
+        doc.setFontSize(11);
+        doc.setFont("helvetica", "bold");
+        doc.text("Obra de referencia:", 20, yPos);
+        yPos += 10;
+        
+        doc.setFont("helvetica", "normal");
+        doc.text(`Ubicación: ${calle}, ${localidad}`, 20, yPos);
+        yPos += 8;
+        doc.text(`Nomenclatura catastral: ${nomenclatura} - Manz/Parc: ${parcela}`, 20, yPos);
+        yPos += 8;
+        doc.text(`Expediente Municipal N°: ${expMuni} | Visado CAPBA N°: ${visado}`, 20, yPos);
+        yPos += 8;
+        doc.text(`Fecha De contrato: ${fechaContrato}`, 20, yPos);
+        yPos += 15;
+
+        // Texto Genérico y Exacto según DOC-2021
+        doc.setFont("helvetica", "normal");
+        const fechaHoy = new Date().toLocaleDateString('es-AR');
+        
+        let textoPrincipal = "";
+        let lineasEspeciales = [];
+        
+        switch(tipoActa) {
+            case "ACTA DE INICIO DE OBRA":
+                textoPrincipal = `Por la presente y con el fin de establecer plazos y etapas de obra se define el día de la fecha como inicio de la obra de referencia.`;
+                break;
+            case "ACTA DE REPLANTEO":
+                textoPrincipal = `Por la presente se certifica que el contratista ha comprobado que las medidas y ángulos del replanteo concuerdan con las de la documentación del proyecto.\n\nEl contratista partiendo de los puntos fijos de planimetría y nivel indicados ha procedido con las tareas de replanteo con el resultado detallado en los siguientes puntos.\n\nEl contratista ha procedido a trazar los ejes de replanteo de acuerdo con los planos de la documentación del proyecto quedando los mismos materializados en el lugar de la obra.\n\nEl contratista ha procedido a emplazar el nivel +-O.OO de acuerdo con lo indicado en la documentación de proyecto y su posición ha quedado materializada en la obra.\n\nEn prueba de conformidad se suscribe la presente acta.`;
+                break;
+            case "ACTA DE PARALIZACION DE OBRA":
+                textoPrincipal = `Por la presente se acuerda y comunica la paralización de la obra de referencia, siendo el estado de avance de la misma el detallado en la planilla adjunta y comprometiéndose las partes a comunicarse en forma fehaciente el reinicio de los trabajos.\n\nLa determinación de esta decisión es por común acuerdo entre las partes y suspende los plazos del contrato hasta la reanudación de los trabajos.\n\nDe las tareas contratadas se ha realizado el .... % del proyecto y el .... % de la dirección de obra según planilla de estado de obra que se acompaña y que forma parte del presente documento.\n\nSe ha respetado la esencia de lo programado y no han surgido ni ocurrido ampliaciones, supresiones o modificaciones que alteren el contrato del caso.`;
+                break;
+            case "ACTA DE REINICIO DE OBRA":
+                textoPrincipal = `Por la presente se acuerda el día de la fecha como el de reinicio de los trabajos de la obra de referencia.`;
+                break;
+            case "ACTA DE RECEPCION PROVISORIA":
+                textoPrincipal = `En el dia de la fecha quienes suscriben la presente acta declaran lo siguiente:\n\nlos trabajos objeto del contrato de referencia fueron inspeccionados y se encuentran suficientemente terminados de acuerdo con la documentación contractual y las ordenes emitidas por la dirección de obra\n\nSe establece como fecha de recepción provisoria de la obra el día del mes de del año\n\nSe deja constancia que los trabajos fueron completados dentro del plazo contractual y sus ampliaciones (o con un atraso o anticipación de Días)\n\nEl plazo de garantía previsto en la documentación contractual se computará a partir de la fecha establecida en esta acta.\n\nEn el anexo que se adjunta se detallan las fallas y defectos menores registrados durante la inspección realizada, los que deberán ser completados, corregidos o rehechos por el contratista dentro de los dias corridos. La no inclusión de fallas o defectos menores en el anexo solo significa que al momento de la inspección no fueron advertidos o que no se habían evidenciado, lo que no altera las responsabilidades del contratista y su obligación de completar todos los trabajos y subsanar todos los defectos que se manifiesten de acuerdo con la documentación contractual.\n\nEl comitente por medio de esta acta toma posesión y se hace cargo a partir de la fecha de su vigilancia y mantenimiento, cumpliendo con las disposiciones del pliego de condiciones, se deja constancia así mismo de lo siguiente:\n\nDe conformidad se suscribe esta acta por triplicado, por el comitente, el contratista y la dirección de obra.`;
+                break;
+            case "ACTA DE RECEPCION DEFINITIVA":
+                textoPrincipal = `En el día de la fecha quienes suscriben la presente acta declaran lo siguiente:\n\nQue se han cumplido los plazos de garantía de días computados a partir de la fecha a partir de la fecha establecida en el acta de recepción provisoria.\n\nQue en la inspección realizada con fecha .. Se ha constatado que el contratista realizó ejecutó los trabajos necesarios para subsanar las observaciones realizadas en el mismo acta.\n\nQue con fecha Fue aprobada la liquidación final practicad por la dirección de obra y que a la fecha no subsisten saldos impagos\n\nQue se ha devuelto al contratista la garantía de cumplimiento del contrato, obrando esta acta como suficiente recibo.\n\nQue se han cumplido las restantes obligaciones del contrato de fecha\n\nQue de acuerdo con la documentación contractual la recepción definitiva de la obra no releva al contratista de las responsabilidades por vicios ocultos, ni por otros defectos de la obra objeto de su contrato, como consecuencia de la mala calidad de los materiales empleados o deficiencias en la ejecución.\n\nQue subsisten para el contratista las responsabilidades de acuerdo con el Art. 1646 del Código Civil. De conformidad se suscribe esta acta por triplicado, por el comitente, el contratista y la dirección de obra.`;
+                break;
+            case "ACTA DE DESLIGAMIENTO":
+                textoPrincipal = `Por la presente se comunica que a partir de la fecha han cesado las obligaciones profesionales que he contraído con el Sr. por la obra de referencia\n\nEste documento corresponde a las tareas de proyecto y dirección de dicha obra que me encargara el comitente citado\n\nLa determinación de esta decisión es por común acuerdo entre las partes\n\nDe las tareas contratadas se han realizado el .... % del proyecto y el ....% de la dirección de obra, según acta de estado de obra que se acompaña y que forma parte del presente documento.\n\nSe ha respetado la esencia de lo programado y no han surgido ni ocurrido ampliaciones, supresiones o modificaciones que alteren el contrato del caso.\n\nHe percibido del comitente por honorarios de las tareas realizadas la cantidad de $ y he efectuado los depósitos de la cuota de ejercicio profesional de $ y de aportes provisionales de $ . según fotocopia de los comprobantes que se acompañan\n\nPara la toma de conocimiento y a todo efecto que corresponda hago llegar copia de la presente a la Municipalidad de`;
+                break;
+            case "ACTA DE ESTADO DE OBRA":
+                textoPrincipal = `RUBROS                               PORCENTAJE DEL RUBRO                               PORCENTAJE EJECUTADO\n\nInvestigación: 50%\nPrograma de necesidades: 100%\nDiseño del Proyecto: 100%\nComputo de materiales: 1,25%\nCortado de piezas: 2%\nEsamblado de piezas: 0%\nMontaje electrónico: 20%\nProgramación módulo 1: 50,43%\nProgramación arduino uno: 30%\nMontaje de leds: 80,56%\nAutomatizacion de puerta de acceso: 10%\nMontaje y programación de dth11: 45,34%\nProgramación De alarma: 100%\nProgramación de la interface: 40,11%\nPintura de la maqueta: 0%\n\nNOTA: AMPLIAR EN HOJA APARTE COMO ANEXO`;
+                break;
+            case "ACTA DE PRORROGA DE CONTRATO":
+                textoPrincipal = `Por la presente se acuerda en prorrogar el contrato de referencia hasta el Día .................... del mes de .................... del año ....................`;
+                break;
+            case "ORDEN DE SERVICIO":
+                textoPrincipal = `Se comunica a lo siguiente en su carácter de Contratista:\n\n${textoOrden}`;
+                break;
+            default:
+                textoPrincipal = `Documento generado el ${fechaHoy}.`;
+        }
+
+        const lines = doc.splitTextToSize(textoPrincipal, 170);
+        doc.text(lines, 20, yPos);
+        yPos += (lines.length * 6) + 20;
+
+        // Si la posición Y está muy baja (cerca del final de página), añadir nueva página
+        if (yPos > 250) {
+            doc.addPage();
+            yPos = 30;
+        }
+
+        // Firmas (Dinámico según tipo)
+        doc.line(20, yPos, 70, yPos);
+        doc.text("Firma del Profesional", 25, yPos + 5);
+        doc.setFontSize(9);
+        doc.text("Aclaración:", 20, yPos + 10);
+        doc.text("Doc N°:", 20, yPos + 15);
+        
+        if (tipoActa !== "ACTA DE REPLANTEO" && tipoActa !== "ORDEN DE SERVICIO") {
+            doc.line(80, yPos, 130, yPos);
+            doc.text("Firma del Comitente", 85, yPos + 5);
+            doc.text("Aclaración:", 80, yPos + 10);
+            doc.text("Doc N°:", 80, yPos + 15);
+        }
+        
+        if (tipoActa !== "ACTA DE PARALIZACION DE OBRA" && tipoActa !== "ACTA DE DESLIGAMIENTO" && tipoActa !== "ACTA DE ESTADO DE OBRA" && tipoActa !== "ACTA DE PRORROGA DE CONTRATO") {
+            let offset = (tipoActa === "ACTA DE REPLANTEO" || tipoActa === "ORDEN DE SERVICIO") ? 80 : 140;
+            doc.line(offset, yPos, offset + 50, yPos);
+            doc.text("Firma del Contratista", offset + 5, yPos + 5);
+            doc.text("Aclaración:", offset, yPos + 10);
+            doc.text("Doc N°:", offset, yPos + 15);
+        }
+
+        // Guardar
+        const safeName = tipoActa.replace(/\s+/g, '_').toLowerCase();
+        doc.save(`Acta_${safeName}_${expMuni}.pdf`);
+
+        showToast("Acta PDF generada y anexada al legajo exitosamente.", "success");
+        e.target.reset();
+        document.getElementById('acta-orden-extra').style.display = 'none';
+
+    } catch (error) {
+        console.error("Error al generar PDF:", error);
+        showToast("Error al generar el documento PDF.", "warning");
+    } finally {
+        btnSubmit.innerHTML = originalText;
+        btnSubmit.disabled = false;
+    }
 }
 
 // Lógica de Creación de Contratos
