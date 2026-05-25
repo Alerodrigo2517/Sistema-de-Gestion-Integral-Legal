@@ -13,258 +13,595 @@
 
     <header class="app-header">
         <div class="header-container">
-            <div class="brand">
-                <i class="fa-solid fa-gavel"></i>
-                <div>
-                    <h1>SIGIL-MMO</h1>
-                    <span>Sistema de Gestión Integral Legal </span>
+            <div class="header-left">
+                <button id="btn-toggle-sidebar" class="btn-icon"><i class="fa-solid fa-bars"></i></button>
+                <div class="brand">
+                    <i class="fa-solid fa-gavel"></i>
+                    <div>
+                        <h1>SIGIL-MMO</h1>
+                        <span>Sistema de Gestión Integral Legal</span>
+                    </div>
                 </div>
             </div>
-            <nav class="main-nav" id="main-nav">
-                <a href="#autenticacion" id="nav-autenticacion" class="nav-item active"><i class="fa-solid fa-id-card"></i>
-                    <span>Autenticación</span></a>
-                <a href="#expedientes" id="nav-expedientes" class="nav-item" style="display:none;"><i class="fa-solid fa-folder-open"></i> <span>Legajos</span></a>
-                <a href="#contratos" id="nav-contratos" class="nav-item" style="display:none;"><i class="fa-solid fa-file-contract"></i>
-                    <span>Contratos</span></a>
-                <a href="#marco-legal" id="nav-marco-legal" class="nav-item" style="display:none;"><i class="fa-solid fa-book"></i> <span>Marco Legal</span></a>
-            </nav>
+            <div class="header-right" id="header-right" style="display:none;">
+                <a href="#" class="header-link"><i class="fa-regular fa-circle-question"></i> Ayuda</a>
+                <div class="user-profile">
+                    <img src="https://ui-avatars.com/api/?name=Rodrigo+Aguirre&background=0284c7&color=fff&rounded=true"
+                        alt="Perfil" class="profile-pic" id="header-profile-pic">
+                    <span class="user-name" id="header-user-name">RODRIGO AGUIRRE</span>
+                </div>
+                <button class="btn-icon"><i class="fa-solid fa-cog"></i></button>
+            </div>
         </div>
     </header>
 
-    <main class="main-content">
-
-        <section id="autenticacion" class="panel-control login-panel">
-            <div class="panel-header">
-                <h2><i class="fa-solid fa-lock"></i> Acceso Seguro al Sistema Registral</h2>
-                <p>El ingreso de datos confidenciales de comitentes está protegido bajo normativas de secreto
-                    profesional.</p>
-            </div>
-
-            <div class="perfil-selector">
-                <button type="button" class="btn-perfil active" id="btn-role-mmo" data-role="mmo">
-                    <i class="fa-solid fa-user-tie"></i>
-                    <div>
-                        <strong>Profesional Matriculado</strong>
-                        <span>MMO / Técnicos</span>
-                    </div>
-                </button>
-                <button type="button" class="btn-perfil" id="btn-role-comitente" data-role="comitente">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <div>
-                        <strong>Comitente Autorizado</strong>
-                        <span>Consulta de Legajo</span>
-                    </div>
-                </button>
-            </div>
-
-            <form id="form-login" class="form-institucional">
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="matricula">Matrícula Profesional o DNI</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-id-badge"></i>
-                            <input type="text" id="matricula" placeholder="Ej: T-45321 o DNI" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Clave de Acceso / Nº Legajo</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-key"></i>
-                            <input type="password" id="password" placeholder="••••••••" required>
-                        </div>
+    <div class="app-layout">
+        <aside class="app-sidebar" id="sidebar" style="display:none;">
+            <nav class="sidebar-nav">
+                <a href="#home" class="sidebar-item"><i class="fa-solid fa-house"></i> <span>Home</span></a>
+                <div class="sidebar-group">
+                    <a href="#ejercicio" class="sidebar-item active group-title" id="nav-ejercicio"><i
+                            class="fa-solid fa-briefcase"></i> <span>Ejercicio</span> <i
+                            class="fa-solid fa-chevron-down arrow"></i></a>
+                    <div class="sidebar-submenu" style="display:block;">
+                        <a href="#expedientes" class="sidebar-subitem active" id="nav-expedientes">Legajos de obra</a>
+                        <a href="#contratos" class="sidebar-subitem" id="nav-contratos">Contratos</a>
                     </div>
                 </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn-submit">Validar Credenciales <i
-                            class="fa-solid fa-chevron-right"></i></button>
+                <div class="sidebar-group">
+                    <a href="#cuenta" class="sidebar-item group-title"><i class="fa-solid fa-file-invoice-dollar"></i>
+                        <span>Cuenta</span> <i class="fa-solid fa-chevron-down arrow"></i></a>
                 </div>
-            </form>
-        </section>
+                <div class="sidebar-group">
+                    <a href="#perfil" class="sidebar-item group-title"><i class="fa-solid fa-user"></i>
+                        <span>Perfil</span> <i class="fa-solid fa-chevron-down arrow"></i></a>
+                </div>
+                <a href="#marco-legal" id="nav-marco-legal" class="sidebar-item"><i class="fa-solid fa-book"></i>
+                    <span>Marco Legal</span></a>
+            </nav>
+        </aside>
 
-        <section id="expedientes" class="panel-control">
-            <div class="panel-header">
-                <h2><i class="fa-solid fa-folder-open"></i> Estado de Legajos Técnicos</h2>
-                <p>Seguimiento en tiempo real de aprobaciones y visados municipales o colegiados.</p>
-            </div>
+        <main class="main-content" id="main-content">
 
-            <div id="expedientes-container">
-                <!-- Los legajos dinámicos se insertarán aquí por app.js -->
-            </div>
-        </section>
-
-        <section id="contratos" class="panel-control">
-            <div class="panel-header">
-                <h2><i class="fa-solid fa-file-contract"></i> Registro de Contratos Profesionales</h2>
-                <p>Generación de nuevos contratos y encomiendas de tareas profesionales.</p>
-            </div>
-
-            <form id="form-contratos" class="form-institucional">
-                <h4 class="form-section-title">Datos del Comitente</h4>
-                <div class="form-grid-3">
-                    <div class="form-group">
-                        <label for="nombre-comitente">Nombre / Razón Social</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-user"></i>
-                            <input type="text" id="nombre-comitente" placeholder="Ej: Juan Pérez" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="dni-comitente-contrato">DNI / CUIT</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-address-card"></i>
-                            <input type="text" id="dni-comitente-contrato" placeholder="Ej: 20345678" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="domicilio-comitente">Domicilio</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-location-dot"></i>
-                            <input type="text" id="domicilio-comitente" placeholder="Ej: Av. San Martín 123" required>
-                        </div>
-                    </div>
+            <section id="autenticacion" class="panel-control login-panel">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-lock"></i> Acceso Seguro al Sistema Registral</h2>
+                    <p>El ingreso de datos confidenciales de comitentes está protegido bajo normativas de secreto
+                        profesional.</p>
                 </div>
 
-                <h4 class="form-section-title">Datos de la Obra</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="objeto-construccion">Objeto de Construcción</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-trowel-bricks"></i>
-                            <input type="text" id="objeto-construccion" placeholder="Ej: Vivienda unifamiliar" required>
+                <div class="perfil-selector">
+                    <button type="button" class="btn-perfil active" id="btn-role-mmo" data-role="mmo">
+                        <i class="fa-solid fa-user-tie"></i>
+                        <div>
+                            <strong>Profesional Matriculado</strong>
+                            <span>MMO / Técnicos</span>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="ubicacion-terreno">Ubicación del Terreno</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-map-pin"></i>
-                            <input type="text" id="ubicacion-terreno" placeholder="Ej: Lote 45, Barrio Sur" required>
+                    </button>
+                    <button type="button" class="btn-perfil" id="btn-role-comitente" data-role="comitente">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <div>
+                            <strong>Comitente Autorizado</strong>
+                            <span>Consulta de Legajo</span>
                         </div>
-                    </div>
+                    </button>
                 </div>
 
-                <h4 class="form-section-title">Datos del Constructor y Profesional</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nombre-constructor">Constructor (Nombre / Empresa)</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-helmet-safety"></i>
-                            <input type="text" id="nombre-constructor" placeholder="Ej: Construcciones SA" required>
+                <form id="form-login" class="form-institucional">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="matricula">Matrícula Profesional o DNI</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-id-badge"></i>
+                                <input type="text" id="matricula" placeholder="Ej: T-45321 o DNI" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="password">Clave de Acceso / Nº Legajo</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-key"></i>
+                                <input type="password" id="password" placeholder="••••••••" required>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="domicilio-constructor">Domicilio del Constructor</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-building"></i>
-                            <input type="text" id="domicilio-constructor" placeholder="Ej: Calle 4 N° 56" required>
-                        </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Validar Credenciales <i
+                                class="fa-solid fa-chevron-right"></i></button>
                     </div>
-                </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="nombre-profesional">Profesional Proyectista/Director</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-user-tie"></i>
-                            <input type="text" id="nombre-profesional" placeholder="Ej: Arq. Carlos Gómez" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="domicilio-profesional">Domicilio del Profesional</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-house-user"></i>
-                            <input type="text" id="domicilio-profesional" placeholder="Ej: Oficina 12, Centro" required>
-                        </div>
-                    </div>
+                </form>
+            </section>
+
+            <section id="expedientes" class="panel-control">
+                <div class="view-header">
+                    <h2>Ejercicio</h2>
+                    <button class="btn-primary" id="btn-nuevo-legajo"><i class="fa-solid fa-plus"></i> Nuevo
+                        Legajo</button>
                 </div>
 
-                <h4 class="form-section-title">Condiciones del Contrato</h4>
-                <div class="form-grid-3">
-                    <div class="form-group">
-                        <label for="tipo-contrato">Tipo de Contrato</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-file-signature"></i>
-                            <select id="tipo-contrato" required>
-                                <option value="Ajuste Alzado">Ajuste Alzado</option>
-                                <option value="Unidad de Medida">Unidad de Medida</option>
+                <div class="view-tabs">
+                    <button class="tab-btn active">Legajos</button>
+                    <button class="tab-btn">Historial</button>
+                </div>
+
+                <div class="filter-panel">
+                    <div class="filter-grid">
+                        <div class="form-group">
+                            <input type="text" placeholder="Apellido / CUIT" class="filter-input">
+                        </div>
+                        <div class="form-group">
+                            <input type="date" placeholder="dd / mm / aaaa" class="filter-input">
+                        </div>
+                        <div class="form-group">
+                            <select class="filter-input">
+                                <option>Estado: Seleccionar</option>
+                                <option>Aprobado</option>
+                                <option>Pendiente</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Número legajo" class="filter-input">
+                        </div>
+                        <div class="form-group">
+                            <select class="filter-input">
+                                <option>Fecha | Más reciente</option>
+                                <option>Fecha | Más antiguo</option>
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="plazo-ejecucion">Plazo de Ejecución (meses)</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-regular fa-calendar-days"></i>
-                            <input type="number" id="plazo-ejecucion" placeholder="Ej: 12" required>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="forma-pago">Forma de Pago</label>
-                        <div class="input-icon-wrapper">
-                            <i class="fa-solid fa-money-bill-wave"></i>
-                            <select id="forma-pago" required>
-                                <option value="Certificaciones Mensuales">Certificaciones Mensuales</option>
-                                <option value="Entregas por Etapas">Entregas por Etapas</option>
-                                <option value="Pago al Finalizar">Pago al Finalizar</option>
-                            </select>
+                    <div class="filter-actions">
+                        <button class="btn-submit">Filtrar</button>
+                        <a href="#" class="text-muted">Borrar</a>
+                        <div class="filter-badge-wrapper">
+                            <i class="fa-solid fa-sliders"></i>
+                            <span class="badge-indicator">2</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>Seguros Requeridos</label>
-                        <div style="display:flex; flex-direction:column; gap:5px; padding-top: 8px;">
-                            <label style="font-weight: normal; font-size: 0.9rem; cursor:pointer;">
-                                <input type="checkbox" id="seguro-rc" value="Responsabilidad Civil" checked> Responsabilidad Civil
-                            </label>
-                            <label style="font-weight: normal; font-size: 0.9rem; cursor:pointer;">
-                                <input type="checkbox" id="seguro-tr" value="Todo Riesgo"> Todo Riesgo Construcción
-                            </label>
+                <div id="expedientes-container">
+                    <!-- Los legajos dinámicos se insertarán aquí por app.js -->
+                </div>
+            </section>
+
+            <!-- NUEVO LEGAJO VIEW -->
+            <section id="nuevo-legajo" class="panel-control" style="display:none;">
+                <div class="form-header">
+                    <button class="btn-back" id="btn-volver-ejercicio"><i class="fa-solid fa-chevron-left"></i>
+                        VOLVER</button>
+                    <h2>Nuevo Legajo</h2>
+                    <span class="text-muted-small">* Campos obligatorios</span>
+                </div>
+
+                <div class="stepper-horizontal">
+                    <div class="step active">
+                        <div class="step-circle">1</div>
+                        <span class="step-text">DATOS</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step inactive">
+                        <div class="step-circle">2</div>
+                        <span class="step-text">COMITENTE</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step inactive">
+                        <div class="step-circle">3</div>
+                        <span class="step-text">OBRA</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step inactive">
+                        <div class="step-circle">4</div>
+                        <span class="step-text">DOCUMENTOS</span>
+                    </div>
+                    <div class="step-line"></div>
+                    <div class="step inactive">
+                        <div class="step-circle">5</div>
+                        <span class="step-text">CONFIRMAR</span>
+                    </div>
+                </div>
+
+                <div class="card-form">
+                    <div class="form-group-vertical">
+                        <label>Matrícula *</label>
+                        <select class="input-standard">
+                            <option>Seleccionar</option>
+                            <option>T-45321</option>
+                        </select>
+                    </div>
+                    <div class="form-group-vertical">
+                        <label>Rubro *</label>
+                        <select class="input-standard">
+                            <option>Seleccionar</option>
+                            <option>Vivienda Unifamiliar</option>
+                            <option>Comercial</option>
+                        </select>
+                    </div>
+                    <div class="form-group-vertical">
+                        <label>Modalidad *</label>
+                        <select class="input-standard">
+                            <option>Seleccionar</option>
+                            <option>Obra Nueva</option>
+                            <option>Ampliación</option>
+                            <option>Regularización</option>
+                        </select>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn-primary">Siguiente</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- DASHBOARD LEGAJO VIEW -->
+            <section id="dashboard-legajo" class="panel-control" style="display:none;">
+                <div class="form-header">
+                    <button class="btn-back" id="btn-volver-dashboard"><i class="fa-solid fa-chevron-left"></i>
+                        VOLVER</button>
+                    <h2>Seguimiento Legal</h2>
+                </div>
+
+                <div class="kpi-cards">
+                    <div class="kpi-card info-obra">
+                        <h4>Datos de la Obra</h4>
+                        <p><strong>Obra:</strong> <span id="dash-obra-nombre">3 Unidades Funcionales - Dolores</span>
+                        </p>
+                        <p><strong>Cliente:</strong> <span id="dash-comitente">Juan Pérez</span></p>
+                        <p><strong>Superficie:</strong> <span id="dash-superficie">120 m²</span></p>
+                    </div>
+                    <div class="kpi-card metricas">
+                        <h4>Métricas de Trámites</h4>
+                        <div class="badges-container">
+                            <span class="kpi-badge kpi-verde">2 Aprobados</span>
+                            <span class="kpi-badge kpi-amarillo">1 Observado</span>
+                            <span class="kpi-badge kpi-gris">1 Pendiente</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="form-actions">
-                    <button type="button" class="btn-secondary"><i class="fa-solid fa-calculator"></i> Calcular
-                        Honorarios</button>
-                    <button type="submit" class="btn-submit"><i class="fa-solid fa-file-signature"></i> Generar Contrato
-                        PDF</button>
-                </div>
-            </form>
-        </section>
+                <div class="seguimiento-tabla">
+                    <!-- Etapa 1 -->
+                    <div class="etapa-section">
+                        <h3 class="etapa-titulo">Etapa 1: Viabilidad</h3>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Zonificación</strong>
+                                <span class="ente">Ente: Municipio | Exp: 1234/26 | 10/05/2026</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-verde">Aprobado</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Factibilidad de Servicios (EDEA/Gas)</strong>
+                                <span class="ente">Ente: Prestataria | Exp: Sin iniciar | 12/05/2026</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-azul">Presentado</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                    </div>
 
-        <section id="marco-legal" class="panel-control">
-            <div class="panel-header">
-                <h2><i class="fa-solid fa-book"></i> Marco Legal y Normativas</h2>
-                <p>Acceso rápido a normativas, leyes y reglamentos de edificación vigentes.</p>
+                    <!-- Etapa 2 -->
+                    <div class="etapa-section">
+                        <h3 class="etapa-titulo">Etapa 2: Permiso de Obra</h3>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Visado Colegial</strong>
+                                <span class="ente">Ente: Colegio Profesional | Exp: 5543/26 | 15/05/2026</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-amarillo">Con Observaciones</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Expediente Municipal / Permiso Edificación</strong>
+                                <span class="ente">Ente: Municipio | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 3 -->
+                    <div class="etapa-section">
+                        <h3 class="etapa-titulo">Etapa 3: Ejecución</h3>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Libro de Órdenes</strong>
+                                <span class="ente">Ente: Colegio/Municipio | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Programa de Seguridad</strong>
+                                <span class="ente">Ente: ART / Min. Trabajo | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Inspecciones</strong>
+                                <span class="ente">Ente: Municipio | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Etapa 4 -->
+                    <div class="etapa-section">
+                        <h3 class="etapa-titulo">Etapa 4: Finalización</h3>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Inspección Final / Plano Conforme a Obra</strong>
+                                <span class="ente">Ente: Municipio | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>Final de Obra / Habitabilidad</strong>
+                                <span class="ente">Ente: Municipio | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                        <div class="tramite-row">
+                            <div class="tramite-info">
+                                <strong>ARBA (Aviso de término)</strong>
+                                <span class="ente">Ente: Catastro/Rentas | Exp: Sin iniciar | -</span>
+                            </div>
+                            <div class="tramite-estado">
+                                <span class="badge-status status-gris">Pendiente</span>
+                                <button class="btn-icon-small btn-actualizar-tramite" title="Actualizar"><i
+                                        class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="contratos" class="panel-control">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-file-contract"></i> Registro de Contratos Profesionales</h2>
+                    <p>Generación de nuevos contratos y encomiendas de tareas profesionales.</p>
+                </div>
+
+                <form id="form-contratos" class="form-institucional">
+                    <h4 class="form-section-title">Datos del Comitente</h4>
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label for="nombre-comitente">Nombre / Razón Social</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-user"></i>
+                                <input type="text" id="nombre-comitente" placeholder="Ej: Juan Pérez" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="dni-comitente-contrato">DNI / CUIT</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-address-card"></i>
+                                <input type="text" id="dni-comitente-contrato" placeholder="Ej: 20345678" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="domicilio-comitente">Domicilio</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <input type="text" id="domicilio-comitente" placeholder="Ej: Av. San Martín 123"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="form-section-title">Datos de la Obra</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="objeto-construccion">Objeto de Construcción</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-trowel-bricks"></i>
+                                <input type="text" id="objeto-construccion" placeholder="Ej: Vivienda unifamiliar"
+                                    required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="ubicacion-terreno">Ubicación del Terreno</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-map-pin"></i>
+                                <input type="text" id="ubicacion-terreno" placeholder="Ej: Lote 45, Barrio Sur"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="form-section-title">Datos del Constructor y Profesional</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre-constructor">Constructor (Nombre / Empresa)</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-helmet-safety"></i>
+                                <input type="text" id="nombre-constructor" placeholder="Ej: Construcciones SA" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="domicilio-constructor">Domicilio del Constructor</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-building"></i>
+                                <input type="text" id="domicilio-constructor" placeholder="Ej: Calle 4 N° 56" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="nombre-profesional">Profesional Proyectista/Director</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-user-tie"></i>
+                                <input type="text" id="nombre-profesional" placeholder="Ej: Arq. Carlos Gómez" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="domicilio-profesional">Domicilio del Profesional</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-house-user"></i>
+                                <input type="text" id="domicilio-profesional" placeholder="Ej: Oficina 12, Centro"
+                                    required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 class="form-section-title">Condiciones del Contrato</h4>
+                    <div class="form-grid-3">
+                        <div class="form-group">
+                            <label for="tipo-contrato">Tipo de Contrato</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-file-signature"></i>
+                                <select id="tipo-contrato" required>
+                                    <option value="Ajuste Alzado">Ajuste Alzado</option>
+                                    <option value="Unidad de Medida">Unidad de Medida</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="plazo-ejecucion">Plazo de Ejecución (meses)</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-regular fa-calendar-days"></i>
+                                <input type="number" id="plazo-ejecucion" placeholder="Ej: 12" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="forma-pago">Forma de Pago</label>
+                            <div class="input-icon-wrapper">
+                                <i class="fa-solid fa-money-bill-wave"></i>
+                                <select id="forma-pago" required>
+                                    <option value="Certificaciones Mensuales">Certificaciones Mensuales</option>
+                                    <option value="Entregas por Etapas">Entregas por Etapas</option>
+                                    <option value="Pago al Finalizar">Pago al Finalizar</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Seguros Requeridos</label>
+                            <div style="display:flex; flex-direction:column; gap:5px; padding-top: 8px;">
+                                <label style="font-weight: normal; font-size: 0.9rem; cursor:pointer;">
+                                    <input type="checkbox" id="seguro-rc" value="Responsabilidad Civil" checked>
+                                    Responsabilidad Civil
+                                </label>
+                                <label style="font-weight: normal; font-size: 0.9rem; cursor:pointer;">
+                                    <input type="checkbox" id="seguro-tr" value="Todo Riesgo"> Todo Riesgo Construcción
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn-secondary"><i class="fa-solid fa-calculator"></i> Calcular
+                            Honorarios</button>
+                        <button type="submit" class="btn-submit"><i class="fa-solid fa-file-signature"></i> Generar
+                            Contrato
+                            PDF</button>
+                    </div>
+                </form>
+            </section>
+
+            <section id="marco-legal" class="panel-control">
+                <div class="panel-header">
+                    <h2><i class="fa-solid fa-book"></i> Marco Legal y Normativas</h2>
+                    <p>Acceso rápido a normativas, leyes y reglamentos de edificación vigentes.</p>
+                </div>
+
+                <div class="legal-grid">
+                    <div class="legal-card">
+                        <div class="legal-card-header">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <h3>Ley de Colegiación Nº 10416</h3>
+                        </div>
+                        <p>Reglamentación del ejercicio profesional de Maestros Mayores de Obra y Técnicos.</p>
+                    </div>
+
+                    <div class="legal-card">
+                        <div class="legal-card-header">
+                            <i class="fa-solid fa-city"></i>
+                            <h3>Código de Edificación Municipal</h3>
+                        </div>
+                        <p>Ordenanza vigente sobre retiros, FOS, FOT y normativas de habitabilidad.</p>
+                    </div>
+
+                    <div class="legal-card">
+                        <div class="legal-card-header">
+                            <i class="fa-solid fa-coins"></i>
+                            <h3>Tabla de Honorarios Mínimos</h3>
+                        </div>
+                        <p>Resolución actual con el valor referencial del metro cuadrado y coeficientes.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div> <!-- End app-layout -->
+
+    <!-- MODAL ACTUALIZAR TRÁMITE -->
+    <div id="modal-tramite" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Actualizar Trámite</h3>
+                <button class="btn-close-modal" id="btn-close-modal"><i class="fa-solid fa-xmark"></i></button>
             </div>
-
-            <div class="legal-grid">
-                <div class="legal-card">
-                    <div class="legal-card-header">
-                        <i class="fa-solid fa-scale-balanced"></i>
-                        <h3>Ley de Colegiación Nº 10416</h3>
-                    </div>
-                    <p>Reglamentación del ejercicio profesional de Maestros Mayores de Obra y Técnicos.</p>
+            <div class="modal-body">
+                <div class="form-group-vertical">
+                    <label>Estado del Trámite</label>
+                    <select class="input-standard">
+                        <option value="gris">Pendiente</option>
+                        <option value="azul">Presentado</option>
+                        <option value="amarillo">Con Observaciones</option>
+                        <option value="verde">Aprobado</option>
+                    </select>
                 </div>
-
-                <div class="legal-card">
-                    <div class="legal-card-header">
-                        <i class="fa-solid fa-city"></i>
-                        <h3>Código de Edificación Municipal</h3>
+                <div class="form-group-vertical">
+                    <label>Subir PDF de Plano / Resolución</label>
+                    <div class="file-upload-wrapper">
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+                        <span>Seleccionar archivo PDF</span>
+                        <input type="file" accept=".pdf" class="file-input">
                     </div>
-                    <p>Ordenanza vigente sobre retiros, FOS, FOT y normativas de habitabilidad.</p>
-                </div>
-
-                <div class="legal-card">
-                    <div class="legal-card-header">
-                        <i class="fa-solid fa-coins"></i>
-                        <h3>Tabla de Honorarios Mínimos</h3>
-                    </div>
-                    <p>Resolución actual con el valor referencial del metro cuadrado y coeficientes.</p>
                 </div>
             </div>
-        </section>
-
-    </main>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="btn-cancel-modal">Cancelar</button>
+                <button class="btn-primary" id="btn-save-modal">Guardar Cambios</button>
+            </div>
+        </div>
+    </div>
 
     <footer class="app-footer">
         <div class="footer-container">
@@ -272,6 +609,9 @@
             <p>Versión 1.0.4 | Conectado de forma segura.</p>
         </div>
     </footer>
+
+    <!-- TOAST CONTAINER PARA ALERTAS DEL SISTEMA -->
+    <div id="toast-container" class="toast-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="app.js"></script>

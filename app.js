@@ -48,7 +48,9 @@ const sections = {
     autenticacion: document.getElementById('autenticacion'),
     expedientes: document.getElementById('expedientes'),
     contratos: document.getElementById('contratos'),
-    marcoLegal: document.getElementById('marco-legal')
+    marcoLegal: document.getElementById('marco-legal'),
+    nuevoLegajo: document.getElementById('nuevo-legajo'),
+    dashboardLegajo: document.getElementById('dashboard-legajo')
 };
 
 const navLinks = {
@@ -61,11 +63,39 @@ const navLinks = {
 const expedientesContainer = document.getElementById('expedientes-container');
 const formContratos = document.getElementById('form-contratos');
 
+// Funciones de utilidad para UI
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    
+    let iconClass = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
+    
+    toast.innerHTML = `
+        <i class="fa-solid ${iconClass}"></i>
+        <span class="toast-message">${message}</span>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 10);
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
 // Inicialización de la Interfaz
 function initApp() {
     // Esconder todas las secciones excepto autenticacion al inicio
     hideAllSections();
-    document.getElementById('main-nav').style.display = 'none'; // Ocultar nav bar en login
+    // Ocultar elementos del layout principal en login
+    document.getElementById('sidebar').style.display = 'none';
+    document.getElementById('header-right').style.display = 'none';
+
     sections.autenticacion.style.display = 'block';
 
     // Manejo de botones de rol en login
@@ -84,28 +114,118 @@ function initApp() {
         });
     });
 
-    // Manejo de navegación superior
-    document.querySelectorAll('.nav-item').forEach(nav => {
-        nav.addEventListener('click', function (e) {
-            e.preventDefault();
-            const targetId = this.getAttribute('href').substring(1);
-            showSection(targetId);
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            this.classList.add('active');
-        });
-    });
-
     // Envío del formulario de Login
     formLogin.addEventListener('submit', handleLogin);
 
     // Envío del formulario de Contratos
     formContratos.addEventListener('submit', handleContratoSubmit);
+
+    // Eventos de Navegación del Sidebar
+    document.querySelectorAll('.sidebar-subitem, .sidebar-item:not(.group-title)').forEach(nav => {
+        nav.addEventListener('click', function (e) {
+            e.preventDefault();
+            const href = this.getAttribute('href');
+            if (href && href !== '#') {
+                const targetId = href.substring(1);
+                // Casos especiales (home, perfil, cuenta) que no tienen sección todavía
+                if (sections[targetId]) {
+                    showSection(targetId);
+                } else if (targetId === 'home') {
+                    showSection('expedientes'); // fallback
+                }
+
+                // Actualizar active state
+                document.querySelectorAll('.sidebar-subitem, .sidebar-item').forEach(n => n.classList.remove('active'));
+                this.classList.add('active');
+                // Si es un subitem, activar también su padre
+                if (this.classList.contains('sidebar-subitem')) {
+                    this.closest('.sidebar-group').querySelector('.group-title').classList.add('active');
+                }
+            }
+        });
+    });
+
+    // Eventos Toggle Sidebar
+    const btnToggleSidebar = document.getElementById('btn-toggle-sidebar');
+    const sidebar = document.getElementById('sidebar');
+    if (btnToggleSidebar) {
+        btnToggleSidebar.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            if (window.innerWidth <= 767) {
+                sidebar.classList.toggle('open');
+            }
+        });
+    }
+
+    // Toggle de Submenus
+    document.querySelectorAll('.group-title').forEach(title => {
+        title.addEventListener('click', function (e) {
+            e.preventDefault();
+            const submenu = this.nextElementSibling;
+            if (submenu && submenu.classList.contains('sidebar-submenu')) {
+                if (submenu.style.display === 'none' || submenu.style.display === '') {
+                    submenu.style.display = 'block';
+                    this.querySelector('.arrow').classList.replace('fa-chevron-right', 'fa-chevron-down');
+                } else {
+                    submenu.style.display = 'none';
+                    this.querySelector('.arrow').classList.replace('fa-chevron-down', 'fa-chevron-right');
+                }
+            }
+        });
+    });
+
+    // Navegación Vistas Especiales
+    const btnNuevoLegajo = document.getElementById('btn-nuevo-legajo');
+    if (btnNuevoLegajo) {
+        btnNuevoLegajo.addEventListener('click', () => {
+            showSection('nuevoLegajo');
+        });
+    }
+
+    const btnVolverEjercicio = document.getElementById('btn-volver-ejercicio');
+    if (btnVolverEjercicio) {
+        btnVolverEjercicio.addEventListener('click', () => {
+            showSection('expedientes');
+        });
+    }
+
+    const btnVolverDashboard = document.getElementById('btn-volver-dashboard');
+    if (btnVolverDashboard) {
+        btnVolverDashboard.addEventListener('click', () => {
+            showSection('expedientes');
+        });
+    }
+
+    // Modal Events
+    const modal = document.getElementById('modal-tramite');
+    const btnCloseModal = document.getElementById('btn-close-modal');
+    const btnCancelModal = document.getElementById('btn-cancel-modal');
+    const btnSaveModal = document.getElementById('btn-save-modal');
+
+    // Delegación para los botones de actualizar trámite en el dashboard
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-actualizar-tramite')) {
+            modal.style.display = 'flex';
+        }
+
+        // Simular ir al dashboard al hacer click en un legajo renderizado dinámicamente
+        if (e.target.closest('.progreso-legal-wrapper') || e.target.closest('.meta-expediente')) {
+            showSection('dashboardLegajo');
+        }
+    });
+
+    if (btnCloseModal) btnCloseModal.addEventListener('click', () => modal.style.display = 'none');
+    if (btnCancelModal) btnCancelModal.addEventListener('click', () => modal.style.display = 'none');
+    if (btnSaveModal) btnSaveModal.addEventListener('click', () => {
+        modal.style.display = 'none';
+        showToast("Trámite actualizado correctamente", "success");
+    });
 }
 
 // Ocultar todas las secciones
 function hideAllSections() {
     Object.values(sections).forEach(sec => {
-        if(sec) sec.style.display = 'none';
+        if (sec) sec.style.display = 'none';
     });
 }
 
@@ -125,33 +245,39 @@ function handleLogin(e) {
 
     // Aceptar cualquier usuario y contraseña para propósitos de demostración
     if (currentRole === 'mmo') {
-        loggedUser = { role: 'mmo', user: userVal, pass: passVal, name: 'Arquitecto Demo' };
+        loggedUser = { role: 'mmo', user: userVal, pass: passVal, name: 'Rodrigo Aguirre' };
     } else {
         loggedUser = { role: 'comitente', user: userVal, pass: passVal, name: 'Cliente Demo', legajo: '4589/2026' };
     }
 
-    alert(`¡Bienvenido ${loggedUser.name}! Sesión iniciada como ${loggedUser.role.toUpperCase()}`);
+    showToast(`¡Bienvenido ${loggedUser.name}! Sesión iniciada como ${loggedUser.role.toUpperCase()}`, "success");
     setupDashboard();
 }
 
 // Configurar el entorno post-login según el rol
 function setupDashboard() {
-    // Configurar menú de navegación
-    document.getElementById('main-nav').style.display = 'flex'; // Mostrar nav bar
-    navLinks.autenticacion.style.display = 'none'; // Ocultamos el login
-    navLinks.expedientes.style.display = 'flex';
+    // Mostrar layout principal
+    document.getElementById('sidebar').style.display = 'block';
+    document.getElementById('header-right').style.display = 'flex';
     
+    // Configurar nombre y avatar de usuario
+    document.getElementById('header-user-name').textContent = loggedUser.name.toUpperCase();
+    document.getElementById('header-profile-pic').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(loggedUser.name)}&background=0284c7&color=fff&rounded=true`;
+
     if (loggedUser.role === 'mmo') {
-        navLinks.contratos.style.display = 'flex';
-        navLinks.marcoLegal.style.display = 'flex';
+        document.getElementById('nav-contratos').style.display = 'block';
+        document.getElementById('nav-marco-legal').style.display = 'flex';
     } else {
-        navLinks.contratos.style.display = 'none';
-        navLinks.marcoLegal.style.display = 'none';
+        document.getElementById('nav-contratos').style.display = 'none';
+        document.getElementById('nav-marco-legal').style.display = 'none';
+        // Ocultar botón nuevo legajo
+        const btnNuevoLegajo = document.getElementById('btn-nuevo-legajo');
+        if (btnNuevoLegajo) btnNuevoLegajo.style.display = 'none';
     }
 
     // Activar la vista de expedientes por defecto
-    navLinks.expedientes.click();
-    
+    showSection('expedientes');
+
     // Renderizar los expedientes
     renderExpedientes();
 }
@@ -159,7 +285,7 @@ function setupDashboard() {
 // Renderizar Expedientes dinámicamente
 function renderExpedientes() {
     expedientesContainer.innerHTML = '';
-    
+
     // Filtrar expedientes: El MMO ve todos, el comitente solo el suyo.
     let expToShow = [];
     if (loggedUser.role === 'mmo') {
@@ -180,6 +306,9 @@ function renderExpedientes() {
         divExp.style.marginBottom = "40px";
         divExp.style.paddingBottom = "20px";
         divExp.style.borderBottom = "1px solid var(--border-light)";
+
+        // Wrapper div expedientes
+        divExp.style.cursor = 'pointer'; // Para indicar que es clickeable
 
         // Encabezado Meta
         const metaDiv = document.createElement('div');
@@ -208,7 +337,7 @@ function renderExpedientes() {
         // Pasos (Workflow)
         const wfDiv = document.createElement('div');
         wfDiv.className = "workflow";
-        
+
         exp.pasos.forEach(paso => {
             let badgeHtml = '';
             if (paso.doc) {
@@ -239,7 +368,7 @@ function renderExpedientes() {
 // Lógica de Creación de Contratos
 async function handleContratoSubmit(e) {
     e.preventDefault();
-    
+
     const btnSubmit = e.target.querySelector('.btn-submit');
     const originalText = btnSubmit.innerHTML;
     btnSubmit.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando...';
@@ -249,23 +378,23 @@ async function handleContratoSubmit(e) {
         const nombreComitente = document.getElementById('nombre-comitente').value;
         const dni = document.getElementById('dni-comitente-contrato').value;
         const domicilioComitente = document.getElementById('domicilio-comitente').value;
-        
+
         const objetoConstruccion = document.getElementById('objeto-construccion').value;
         const ubicacionTerreno = document.getElementById('ubicacion-terreno').value;
-        
+
         const nombreConstructor = document.getElementById('nombre-constructor').value;
         const domicilioConstructor = document.getElementById('domicilio-constructor').value;
-        
+
         const nombreProfesional = document.getElementById('nombre-profesional').value;
         const domicilioProfesional = document.getElementById('domicilio-profesional').value;
 
         const tipo = document.getElementById('tipo-contrato').value;
         const plazo = document.getElementById('plazo-ejecucion').value;
         const formaPago = document.getElementById('forma-pago').value;
-        
+
         const seguroRC = document.getElementById('seguro-rc').checked;
         const seguroTR = document.getElementById('seguro-tr').checked;
-        
+
         let seguros = [];
         if (seguroRC) seguros.push("Responsabilidad Civil");
         if (seguroTR) seguros.push("Todo Riesgo Construcción");
@@ -286,19 +415,19 @@ async function handleContratoSubmit(e) {
         // Generar PDF limpio y profesional con jsPDF
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
+
         // Colores y Fuentes
         doc.setFont("helvetica", "bold");
         doc.setFontSize(18);
         doc.setTextColor(30, 58, 138); // primary-color
-        
+
         // Cabecera
         doc.text("SIGIL-MMO", 105, 20, { align: "center" });
         doc.setFontSize(12);
         doc.setFont("helvetica", "normal");
         doc.setTextColor(100, 116, 139);
         doc.text("Sistema de Gestión Integral Legal", 105, 27, { align: "center" });
-        
+
         // Línea separadora
         doc.setLineWidth(0.5);
         doc.setDrawColor(200, 200, 200);
@@ -311,13 +440,13 @@ async function handleContratoSubmit(e) {
             doc.setTextColor(0, 0, 0);
             doc.text("MODELO DE CLÁUSULAS GENERALES", 105, 45, { align: "center" });
             doc.text("PARA UN CONTRATO POR AJUSTE ALZADO", 105, 52, { align: "center" });
-            
+
             doc.setFontSize(11);
             let y = 65;
-            
+
             doc.setFont("helvetica", "bold");
             doc.text("I. Objeto del Contrato y Condiciones de su Ejecución", 20, y);
-            
+
             y += 10;
             doc.text("1. Enunciado.", 20, y);
             y += 5;
@@ -366,7 +495,7 @@ async function handleContratoSubmit(e) {
             doc.setDrawColor(0, 0, 0);
             doc.line(30, y, 90, y);
             doc.line(120, y, 180, y);
-            
+
             y += 5;
             doc.text("Firma Profesional (MMO)", 40, y);
             doc.text("Firma Comitente", 135, y);
@@ -377,14 +506,14 @@ async function handleContratoSubmit(e) {
             doc.setFont("helvetica", "bold");
             doc.setTextColor(0, 0, 0);
             doc.text("CONTRATO DE SERVICIOS PROFESIONALES", 105, 45, { align: "center" });
-            
+
             // Cuerpo del Contrato
             doc.setFontSize(11);
             doc.setFont("helvetica", "normal");
-            
+
             const margenIzq = 20;
             let y = 60;
-            
+
             doc.text(`En la fecha ${nuevoContrato.fecha}, se celebra el presente contrato entre el Profesional`, margenIzq, y);
             y += 7;
             doc.text(`Matriculado (${nombreProfesional}) y el Comitente ${nombreComitente} (DNI/CUIT Nº ${dni}),`, margenIzq, y);
@@ -392,19 +521,19 @@ async function handleContratoSubmit(e) {
             doc.text(`para la obra de ${objetoConstruccion} en ${ubicacionTerreno},`, margenIzq, y);
             y += 7;
             doc.text(`sujetándose a las siguientes cláusulas y condiciones:`, margenIzq, y);
-            
+
             y += 15;
             doc.setFont("helvetica", "bold");
             doc.text("PRIMERA - Tipo de Contrato:", margenIzq, y);
             doc.setFont("helvetica", "normal");
             doc.text(`La encomienda se realizará bajo la modalidad de ${tipo}.`, margenIzq, y + 7);
-            
+
             y += 20;
             doc.setFont("helvetica", "bold");
             doc.text("SEGUNDA - Plazo de Ejecución:", margenIzq, y);
             doc.setFont("helvetica", "normal");
             doc.text(`El plazo estimado para la finalización de las tareas es de ${plazo} meses.`, margenIzq, y + 7);
-            
+
             y += 20;
             doc.setFont("helvetica", "bold");
             doc.text("TERCERA - Forma de Pago:", margenIzq, y);
@@ -417,18 +546,18 @@ async function handleContratoSubmit(e) {
             doc.setFont("helvetica", "normal");
             const segurosText = seguros.length > 0 ? seguros.join(" y ") : "Ningún seguro adicional especificado.";
             doc.text(`Para la presente obra se requerirán las pólizas de: ${segurosText}.`, margenIzq, y + 7);
-            
+
             // Firmas
             y += 40;
             doc.setDrawColor(0, 0, 0);
             doc.line(30, y, 90, y);
             doc.line(120, y, 180, y);
-            
+
             y += 5;
             doc.text("Firma Profesional (MMO)", 40, y);
             doc.text("Firma Comitente", 135, y);
         }
-        
+
         // Footer
         doc.setFontSize(9);
         doc.setTextColor(150, 150, 150);
@@ -439,11 +568,11 @@ async function handleContratoSubmit(e) {
 
         // Limpiar formulario
         formContratos.reset();
-        alert('Contrato redactado y exportado exitosamente con formato profesional.');
+        showToast('Contrato redactado y exportado exitosamente con formato profesional.', 'success');
 
     } catch (error) {
         console.error("Error generando PDF:", error);
-        alert("Ocurrió un error al generar el PDF. Verifica la consola para más detalles.");
+        showToast("Ocurrió un error al generar el PDF. Verifica la consola para más detalles.", "warning");
     } finally {
         btnSubmit.innerHTML = originalText;
         btnSubmit.disabled = false;
