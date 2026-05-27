@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SIGIL-MMO - Sistema de Gestión Legal y Registral</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="frontend/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
@@ -18,7 +18,7 @@
                 <div class="brand">
                     <i class="fa-solid fa-gavel"></i>
                     <div>
-                        <h1>SIGIL-MMO</h1>
+                        <h1>SIGIL</h1>
                         <span>Sistema de Gestión Integral Legal</span>
                     </div>
                 </div>
@@ -46,18 +46,19 @@
                     <div class="sidebar-submenu" style="display:block;">
                         <a href="#expedientes" class="sidebar-subitem active" id="nav-expedientes">Legajos de obra</a>
                         <a href="#contratos" class="sidebar-subitem" id="nav-contratos">Contratos</a>
+                        <a href="#monitoreo" class="sidebar-subitem" id="nav-monitoreo">Responsabilidad Civil</a>
                     </div>
                 </div>
-                <div class="sidebar-group">
-                    <a href="#cuenta" class="sidebar-item"><i class="fa-solid fa-file-invoice-dollar"></i>
-                        <span>Cuenta</span></a>
-                </div>
+
                 <div class="sidebar-group">
                     <a href="#perfil" id="nav-perfil" class="sidebar-item"><i class="fa-solid fa-user"></i>
                         <span>Perfil</span></a>
                 </div>
                 <a href="#marco-legal" id="nav-marco-legal" class="sidebar-item"><i class="fa-solid fa-book"></i>
                     <span>Marco Legal</span></a>
+                <a href="#control-contratistas" id="nav-control-contratistas" class="sidebar-item"><i
+                        class="fa-solid fa-hard-hat"></i>
+                    <span>Contratistas</span></a>
             </nav>
         </aside>
 
@@ -65,26 +66,27 @@
 
             <section id="autenticacion" class="panel-control login-panel">
                 <div class="panel-header">
-                    <h2><i class="fa-solid fa-lock"></i> Acceso Seguro al Sistema Registral</h2>
+                    <h2><i class="fa-solid fa-shield-halved"></i> Acceso al Sistema</h2>
                     <p>El ingreso de datos confidenciales de comitentes está protegido bajo normativas de secreto
                         profesional.</p>
                 </div>
 
-                <div class="perfil-selector">
-                    <button type="button" class="btn-perfil active" id="btn-role-mmo" data-role="mmo">
-                        <i class="fa-solid fa-user-tie"></i>
-                        <div>
-                            <strong>Profesional Matriculado</strong>
-                            <span>MMO / Técnicos</span>
-                        </div>
-                    </button>
-                    <button type="button" class="btn-perfil" id="btn-role-comitente" data-role="comitente">
-                        <i class="fa-solid fa-user-shield"></i>
-                        <div>
-                            <strong>Comitente Autorizado</strong>
-                            <span>Consulta de Legajo</span>
-                        </div>
-                    </button>
+                <div class="role-selector-container">
+                    <label class="field-label">Tipo de Usuario / Rol</label>
+                    <div class="role-segmented-control">
+                        <button type="button" class="role-tab active" id="btn-role-mmo" data-role="mmo">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>Profesional</span>
+                        </button>
+                        <button type="button" class="role-tab" id="btn-role-comitente" data-role="comitente">
+                            <i class="fa-solid fa-user-shield"></i>
+                            <span>Comitente</span>
+                        </button>
+                        <button type="button" class="role-tab" id="btn-role-contratista" data-role="contratista">
+                            <i class="fa-solid fa-truck-fast"></i>
+                            <span>Contratista</span>
+                        </button>
+                    </div>
                 </div>
 
                 <form id="form-login" class="form-institucional">
@@ -232,10 +234,21 @@
 
             <!-- DASHBOARD LEGAJO VIEW -->
             <section id="dashboard-legajo" class="panel-control" style="display:none;">
-                <div class="form-header">
-                    <button class="btn-back" id="btn-volver-dashboard"><i class="fa-solid fa-chevron-left"></i>
-                        VOLVER</button>
-                    <h2>Seguimiento Legal</h2>
+                <div class="form-header" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <button class="btn-back" id="btn-volver-dashboard"><i class="fa-solid fa-chevron-left"></i>
+                            VOLVER</button>
+                        <h2>Seguimiento Legal</h2>
+                    </div>
+                    <div style="text-align: right;">
+                        <button class="btn-primary" id="btn-certificar-avance"><i
+                                class="fa-solid fa-file-signature"></i> Certificar Avance de Obra</button>
+                        <div id="alerta-safe-harbour"
+                            style="display: none; color: var(--warning-color); font-size: 0.8rem; margin-top: 5px; font-weight: bold;">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Certificación bloqueada: Contratista
+                            pendiente
+                        </div>
+                    </div>
                 </div>
 
                 <div class="kpi-cards">
@@ -566,22 +579,26 @@
                             <div class="form-grid">
                                 <div class="form-group-vertical">
                                     <label>Ubicación (Calle y N°)</label>
-                                    <input type="text" id="acta-calle" class="input-standard" placeholder="Ej: San Martín 123" required>
+                                    <input type="text" id="acta-calle" class="input-standard"
+                                        placeholder="Ej: San Martín 123" required>
                                 </div>
                                 <div class="form-group-vertical">
                                     <label>Localidad / Partido</label>
-                                    <input type="text" id="acta-localidad" class="input-standard" placeholder="Ej: Mar del Plata" required>
+                                    <input type="text" id="acta-localidad" class="input-standard"
+                                        placeholder="Ej: Mar del Plata" required>
                                 </div>
                             </div>
-                            
+
                             <div class="form-grid-3">
                                 <div class="form-group-vertical">
                                     <label>Nomenclatura (Circ. Secc.)</label>
-                                    <input type="text" id="acta-nomenclatura" class="input-standard" placeholder="Ej: I. B.">
+                                    <input type="text" id="acta-nomenclatura" class="input-standard"
+                                        placeholder="Ej: I. B.">
                                 </div>
                                 <div class="form-group-vertical">
                                     <label>Manzana / Parcela</label>
-                                    <input type="text" id="acta-parcela" class="input-standard" placeholder="Ej: 12 / 4a">
+                                    <input type="text" id="acta-parcela" class="input-standard"
+                                        placeholder="Ej: 12 / 4a">
                                 </div>
                                 <div class="form-group-vertical">
                                     <label>Fecha de Contrato</label>
@@ -605,12 +622,14 @@
                             <h4 class="form-section-title">3. Detalle de la Orden</h4>
                             <div class="form-group-vertical">
                                 <label>Se comunica a lo siguiente:</label>
-                                <textarea id="acta-texto-orden" class="input-standard" rows="4" placeholder="Redacte la instrucción, advertencia u orden de servicio..."></textarea>
+                                <textarea id="acta-texto-orden" class="input-standard" rows="4"
+                                    placeholder="Redacte la instrucción, advertencia u orden de servicio..."></textarea>
                             </div>
                         </div>
 
                         <div class="card-actions">
-                            <button type="submit" class="btn-primary btn-large" id="btn-submit-acta" style="width: 100%;">
+                            <button type="submit" class="btn-primary btn-large" id="btn-submit-acta"
+                                style="width: 100%;">
                                 <i class="fa-solid fa-file-pdf"></i> Generar Acta PDF y Anexar al Legajo
                             </button>
                         </div>
@@ -618,112 +637,258 @@
                 </div>
             </section>
 
-    <!-- VISTA PERFIL -->
-    <section id="perfil" class="panel-control" style="display:none;">
-        <div class="view-header">
-            <h2><i class="fa-solid fa-user"></i> Perfil de Usuario</h2>
-        </div>
-        <div class="perfil-card">
-            <div class="perfil-avatar-large">
-                <img id="perfil-img-large" src="" alt="Avatar">
-            </div>
-            <div class="perfil-info">
-                <h3 id="perfil-nombre-large">Cargando...</h3>
-                <span class="badge badge-success" id="perfil-rol-large">Rol</span>
-            </div>
-        </div>
-        <div class="card-form" style="max-width: 100%; margin-top: 20px;">
-            <h4 class="form-section-title">Datos Personales y Profesionales</h4>
-            <div class="form-grid-3">
-                <div class="form-group-vertical">
-                    <label>DNI / CUIT</label>
-                    <input type="text" class="input-standard" value="20-34567890-1">
+            <!-- VISTA PERFIL -->
+            <section id="perfil" class="panel-control" style="display:none;">
+                <div class="view-header">
+                    <h2><i class="fa-solid fa-user"></i> Perfil de Usuario</h2>
                 </div>
-                <div class="form-group-vertical">
-                    <label>Correo Electrónico</label>
-                    <input type="email" class="input-standard" value="usuario@sigilmmo.com">
-                </div>
-                <div class="form-group-vertical">
-                    <label>Teléfono</label>
-                    <input type="text" class="input-standard" value="+54 9 223 456-7890">
-                </div>
-                <div class="form-group-vertical">
-                    <label>Matrícula / Legajo</label>
-                    <input type="text" class="input-standard" id="perfil-matricula" readonly>
-                </div>
-                <div class="form-group-vertical">
-                    <label>Domicilio</label>
-                    <input type="text" class="input-standard" value="Av. San Martín 1234, Ciudad">
-                </div>
-            </div>
-            <div class="card-actions">
-                <button class="btn-primary" id="btn-save-perfil">Guardar Cambios</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- VISTA CONFIGURACIÓN -->
-    <section id="configuracion" class="panel-control" style="display:none;">
-        <div class="view-header">
-            <h2><i class="fa-solid fa-cog"></i> Configuración del Sistema</h2>
-        </div>
-        <div class="config-grid">
-            <div class="card-form" style="margin: 0; max-width: 100%;">
-                <h4 class="form-section-title">Preferencias Generales</h4>
-                <div class="config-item">
-                    <div class="config-info">
-                        <strong>Notificaciones por Correo</strong>
-                        <p>Recibir correos sobre cambios de estado en trámites.</p>
+                <div class="perfil-card">
+                    <div class="perfil-avatar-large">
+                        <img id="perfil-img-large" src="" alt="Avatar">
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" checked>
-                        <span class="slider round"></span>
-                    </label>
-                </div>
-                <div class="config-item">
-                    <div class="config-info">
-                        <strong>Alertas de Vencimiento</strong>
-                        <p>Avisos sobre plazos de obras y visados.</p>
+                    <div class="perfil-info">
+                        <h3 id="perfil-nombre-large">Cargando...</h3>
+                        <span class="badge badge-success" id="perfil-rol-large">Rol</span>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" checked>
-                        <span class="slider round"></span>
-                    </label>
                 </div>
-                <div class="config-item">
-                    <div class="config-info">
-                        <strong>Modo Oscuro</strong>
-                        <p>Cambiar apariencia visual del sistema.</p>
+                <div class="card-form" style="max-width: 100%; margin-top: 20px;">
+                    <h4 class="form-section-title">Datos Personales y Profesionales</h4>
+                    <div class="form-grid-3">
+                        <div class="form-group-vertical">
+                            <label>DNI / CUIT</label>
+                            <input type="text" class="input-standard" value="20-34567890-1">
+                        </div>
+                        <div class="form-group-vertical">
+                            <label>Correo Electrónico</label>
+                            <input type="email" class="input-standard" value="usuario@sigil.com">
+                        </div>
+                        <div class="form-group-vertical">
+                            <label>Teléfono</label>
+                            <input type="text" class="input-standard" value="+54 9 223 456-7890">
+                        </div>
+                        <div class="form-group-vertical">
+                            <label>Matrícula / Legajo</label>
+                            <input type="text" class="input-standard" id="perfil-matricula" readonly>
+                        </div>
+                        <div class="form-group-vertical">
+                            <label>Domicilio</label>
+                            <input type="text" class="input-standard" value="Av. San Martín 1234, Ciudad">
+                        </div>
                     </div>
-                    <label class="switch">
-                        <input type="checkbox" id="theme-toggle">
-                        <span class="slider round"></span>
-                    </label>
+                    <div class="card-actions">
+                        <button class="btn-primary" id="btn-save-perfil">Guardar Cambios</button>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="card-form" style="margin: 0; max-width: 100%;">
-                <h4 class="form-section-title">Seguridad</h4>
-                <div class="form-group-vertical">
-                    <label>Contraseña Actual</label>
-                    <input type="password" class="input-standard" placeholder="••••••••">
+            <!-- VISTA CONFIGURACIÓN -->
+            <section id="configuracion" class="panel-control" style="display:none;">
+                <div class="view-header">
+                    <h2><i class="fa-solid fa-cog"></i> Configuración del Sistema</h2>
                 </div>
-                <div class="form-group-vertical">
-                    <label>Nueva Contraseña</label>
-                    <input type="password" class="input-standard" placeholder="••••••••">
-                </div>
-                <div class="form-group-vertical">
-                    <label>Confirmar Nueva Contraseña</label>
-                    <input type="password" class="input-standard" placeholder="••••••••">
-                </div>
-                <div class="card-actions">
-                    <button class="btn-secondary" id="btn-change-password">Actualizar Contraseña</button>
-                </div>
-            </div>
-        </div>
-    </section>
+                <div class="config-grid">
+                    <div class="card-form" style="margin: 0; max-width: 100%;">
+                        <h4 class="form-section-title">Preferencias Generales</h4>
+                        <div class="config-item">
+                            <div class="config-info">
+                                <strong>Notificaciones por Correo</strong>
+                                <p>Recibir correos sobre cambios de estado en trámites.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-info">
+                                <strong>Alertas de Vencimiento</strong>
+                                <p>Avisos sobre plazos de obras y visados.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="config-item">
+                            <div class="config-info">
+                                <strong>Modo Oscuro</strong>
+                                <p>Cambiar apariencia visual del sistema.</p>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="theme-toggle">
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
 
-    </main>
+                    <div class="card-form" style="margin: 0; max-width: 100%;">
+                        <h4 class="form-section-title">Seguridad</h4>
+                        <div class="form-group-vertical">
+                            <label>Contraseña Actual</label>
+                            <input type="password" class="input-standard" placeholder="••••••••">
+                        </div>
+                        <div class="form-group-vertical">
+                            <label>Nueva Contraseña</label>
+                            <input type="password" class="input-standard" placeholder="••••••••">
+                        </div>
+                        <div class="form-group-vertical">
+                            <label>Confirmar Nueva Contraseña</label>
+                            <input type="password" class="input-standard" placeholder="••••••••">
+                        </div>
+                        <div class="card-actions">
+                            <button class="btn-secondary" id="btn-change-password">Actualizar Contraseña</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA RESPONSABILIDAD CIVIL -->
+            <section id="monitoreo" class="panel-control" style="display:none;">
+                <div class="view-header">
+                    <h2><i class="fa-solid fa-shield-halved"></i> Monitoreo de Responsabilidad Civil</h2>
+                    <p class="text-muted-small">Gestión de plazos legales según el Código Civil y Comercial a partir de
+                        la Aceptación de Obra.</p>
+                </div>
+
+                <div class="card-form" style="max-width: 100%; margin-bottom: 20px;">
+                    <form id="form-monitoreo">
+                        <div class="form-grid-3">
+                            <div class="form-group-vertical">
+                                <label>Seleccionar Obra / Legajo *</label>
+                                <select id="monitoreo-legajo" class="input-standard" required>
+                                    <option value="" disabled selected>Seleccione un legajo...</option>
+                                    <!-- Options generated dynamically -->
+                                </select>
+                            </div>
+                            <div class="form-group-vertical">
+                                <label>Fecha de Recepción / Aceptación *</label>
+                                <input type="date" id="monitoreo-fecha" class="input-standard" required>
+                            </div>
+                            <div class="form-group-vertical" style="justify-content: flex-end;">
+                                <button type="submit" class="btn-primary" style="width: 100%;"><i
+                                        class="fa-solid fa-calculator"></i> Guardar y Calcular Plazos</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="monitoreo-alertas-container" style="display:none;">
+                    <div class="panel-header"
+                        style="display:flex; justify-content:space-between; align-items:center; border-bottom: none;">
+                        <h3>Sistema de Alertas de Caducidad</h3>
+                        <button class="btn-secondary" id="btn-enviar-correo-alertas"><i
+                                class="fa-solid fa-envelope"></i> Enviar Alertas por Correo</button>
+                    </div>
+
+                    <div class="legal-grid">
+                        <div class="legal-card" style="border-top: 4px solid var(--warning-color);">
+                            <div class="legal-card-header">
+                                <i class="fa-solid fa-eye-slash" style="color: var(--warning-color);"></i>
+                                <h3 style="color: var(--text-dark);">Denuncia de Vicios Ocultos</h3>
+                            </div>
+                            <p>Plazo máximo para denunciar defectos que no se pudieron advertir en la recepción.</p>
+                            <div
+                                style="margin-top: 15px; background: var(--bg-app); padding: 10px; border-radius: 4px; font-weight: 600;">
+                                <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Vencimiento
+                                    (60 días):</span>
+                                <span id="fecha-vicios"
+                                    style="font-size: 1.1rem; color: var(--text-dark);">--/--/----</span>
+                            </div>
+                        </div>
+
+                        <div class="legal-card" style="border-top: 4px solid var(--accent-color);">
+                            <div class="legal-card-header">
+                                <i class="fa-solid fa-scale-balanced" style="color: var(--accent-color);"></i>
+                                <h3 style="color: var(--text-dark);">Caducidad Sustantiva</h3>
+                            </div>
+                            <p>Plazo legal de garantía para reclamar por defectos ocultos descubiertos.</p>
+                            <div
+                                style="margin-top: 15px; background: var(--bg-app); padding: 10px; border-radius: 4px; font-weight: 600;">
+                                <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Vencimiento
+                                    (3 años):</span>
+                                <span id="fecha-sustantiva"
+                                    style="font-size: 1.1rem; color: var(--text-dark);">--/--/----</span>
+                            </div>
+                        </div>
+
+                        <div class="legal-card" style="border-top: 4px solid var(--primary-color);">
+                            <div class="legal-card-header">
+                                <i class="fa-solid fa-house-crack" style="color: var(--primary-color);"></i>
+                                <h3 style="color: var(--text-dark);">Responsabilidad por Ruina</h3>
+                            </div>
+                            <p>Plazo máximo de responsabilidad frente a ruina total o parcial de la obra.</p>
+                            <div
+                                style="margin-top: 15px; background: var(--bg-app); padding: 10px; border-radius: 4px; font-weight: 600;">
+                                <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Vencimiento
+                                    (10 años):</span>
+                                <span id="fecha-ruina"
+                                    style="font-size: 1.1rem; color: var(--text-dark);">--/--/----</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VISTA CONTRATISTA DASHBOARD -->
+            <section id="contratista-dashboard" class="panel-control" style="display:none;">
+                <div class="view-header">
+                    <h2><i class="fa-solid fa-file-arrow-up"></i> Portal de Documentación (Contratistas)</h2>
+                    <p class="text-muted-small">Suba los documentos obligatorios para habilitar su participación y el
+                        cobro de certificaciones en la obra asignada.</p>
+                </div>
+
+                <div class="kpi-cards" style="margin-bottom: 20px;">
+                    <div class="kpi-card info-obra">
+                        <h4>Estado de Habilitación</h4>
+                        <div style="display:flex; align-items:center; gap:10px; margin-top: 10px;">
+                            <span id="sub-estado-badge" class="badge-status status-gris"
+                                style="font-size: 1rem; padding: 5px 10px;">Sin Documentación</span>
+                            <span id="sub-estado-texto" style="font-size: 0.85rem; color: var(--text-muted);">Su
+                                documentación aún no ha sido revisada por el Maestro Mayor de Obras.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-form" style="max-width: 100%;">
+                    <form id="form-contratista-docs">
+                        <h4 class="form-section-title">Carga Unificada de Documentos</h4>
+                        <div class="form-grid-3">
+                            <div class="form-group-vertical">
+                                <label>1. Formulario 931 (AFIP) *</label>
+                                <input type="file" class="input-standard" accept=".pdf" required>
+                            </div>
+                            <div class="form-group-vertical">
+                                <label>2. Certificado de Cobertura (ART) *</label>
+                                <input type="file" class="input-standard" accept=".pdf" required>
+                            </div>
+                            <div class="form-group-vertical">
+                                <label>3. Recibos de Sueldo Firmados *</label>
+                                <input type="file" class="input-standard" accept=".pdf,.zip" required>
+                            </div>
+                        </div>
+                        <div class="card-actions" style="margin-top: 20px;">
+                            <button type="submit" class="btn-primary" id="btn-submit-subdocs" style="width: 100%;">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Enviar Documentación a Revisión
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- VISTA MMO CONTROL CONTRATISTAS -->
+            <section id="control-contratistas" class="panel-control" style="display:none;">
+                <div class="view-header">
+                    <h2><i class="fa-solid fa-list-check"></i> Auditoría de Contratistas (Safe Harbour)</h2>
+                    <p class="text-muted-small">Apruebe la documentación de terceros para liberar los bloqueos
+                        solidarios en la certificación de obra.</p>
+                </div>
+
+                <div id="lista-contratistas-container">
+                    <!-- Dinámico: Lista de contratistas por obra -->
+                </div>
+            </section>
+
+        </main>
     </div> <!-- End app-layout -->
 
     <!-- MODAL ACTUALIZAR TRÁMITE -->
@@ -761,7 +926,7 @@
 
     <footer class="app-footer">
         <div class="footer-container">
-            <p>&copy; 2026 SIGIL-MMO. Sistema Integrado para Maestros Mayores de Obras.</p>
+            <p>&copy; 2026 SIGIL Sistema Integrado para Maestros Mayores de Obras.</p>
             <p>Versión 1.0.4 | Conectado de forma segura.</p>
         </div>
     </footer>
@@ -770,7 +935,7 @@
     <div id="toast-container" class="toast-container"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="app.js"></script>
+    <script src="frontend/app.js"></script>
 </body>
 
 </html>

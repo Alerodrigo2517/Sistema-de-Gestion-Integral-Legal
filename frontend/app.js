@@ -1,8 +1,9 @@
 // Base de datos simulada (Mock DB)
 const mockDB = {
     users: [
-        { role: 'mmo', user: 'T-1234', pass: '1234', name: 'Arquitecto Juan Pérez' },
-        { role: 'comitente', user: '20345678', pass: '4589', name: 'María Gómez', legajo: '4589/2026' }
+        { role: 'mmo', user: 'T-1234', pass: '1234', name: 'Rodrigo Aguirre' },
+        { role: 'comitente', user: '20345678', pass: '4589', name: 'María Gómez', legajo: '4589/2026' },
+        { role: 'contratista', user: '30-12345678-9', pass: '4589', name: 'Constructora SRL', legajo: '4589/2026' }
     ],
     expedientes: [
         {
@@ -30,7 +31,10 @@ const mockDB = {
             ]
         }
     ],
-    contratos: []
+    contratos: [],
+    contratistas: [
+        { id: '30-12345678-9', legajo: '4589/2026', nombre: 'Constructora SRL', estado: 'pendiente', docs: null }
+    ]
 };
 
 // Estado Global
@@ -52,14 +56,21 @@ const sections = {
     nuevoLegajo: document.getElementById('nuevo-legajo'),
     dashboardLegajo: document.getElementById('dashboard-legajo'),
     perfil: document.getElementById('perfil'),
-    configuracion: document.getElementById('configuracion')
+    configuracion: document.getElementById('configuracion'),
+    monitoreo: document.getElementById('monitoreo'),
+    contratistaDashboard: document.getElementById('contratista-dashboard'),
+    'contratista-dashboard': document.getElementById('contratista-dashboard'),
+    controlContratistas: document.getElementById('control-contratistas'),
+    'control-contratistas': document.getElementById('control-contratistas')
 };
 
 const navLinks = {
     autenticacion: document.getElementById('nav-autenticacion'),
     expedientes: document.getElementById('nav-expedientes'),
     contratos: document.getElementById('nav-contratos'),
-    marcoLegal: document.getElementById('nav-marco-legal')
+    marcoLegal: document.getElementById('nav-marco-legal'),
+    monitoreo: document.getElementById('nav-monitoreo'),
+    controlContratistas: document.getElementById('nav-control-contratistas')
 };
 
 const expedientesContainer = document.getElementById('expedientes-container');
@@ -72,18 +83,18 @@ function showToast(message, type = 'success') {
 
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
-    
+
     let iconClass = type === 'success' ? 'fa-circle-check' : 'fa-triangle-exclamation';
-    
+
     toast.innerHTML = `
         <i class="fa-solid ${iconClass}"></i>
         <span class="toast-message">${message}</span>
     `;
-    
+
     container.appendChild(toast);
-    
+
     setTimeout(() => toast.classList.add('show'), 10);
-    
+
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
@@ -101,14 +112,17 @@ function initApp() {
     sections.autenticacion.style.display = 'block';
 
     // Manejo de botones de rol en login
-    document.querySelectorAll('.btn-perfil').forEach(btn => {
+    document.querySelectorAll('.role-tab').forEach(btn => {
         btn.addEventListener('click', function () {
-            document.querySelectorAll('.btn-perfil').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.role-tab').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             currentRole = this.dataset.role;
             if (currentRole === 'comitente') {
                 inputUser.placeholder = "Ej: DNI (20345678)";
                 inputPass.placeholder = "Nº de Legajo (Ej: 4589)";
+            } else if (currentRole === 'contratista') {
+                inputUser.placeholder = "CUIT Ej: 30-12345678-9";
+                inputPass.placeholder = "Nº de Legajo o Clave";
             } else {
                 inputUser.placeholder = "Ej: T-45321";
                 inputPass.placeholder = "••••••••";
@@ -127,7 +141,7 @@ function initApp() {
     if (formActas) {
         formActas.addEventListener('submit', handleActaSubmit);
     }
-    
+
     const actaTipo = document.getElementById('acta-tipo');
     const actaOrdenExtra = document.getElementById('acta-orden-extra');
     if (actaTipo && actaOrdenExtra) {
@@ -295,6 +309,7 @@ function initApp() {
         // Simular ir al dashboard al hacer click en un legajo renderizado dinámicamente
         if (e.target.closest('.progreso-legal-wrapper') || e.target.closest('.meta-expediente')) {
             showSection('dashboardLegajo');
+            checkSafeHarbour();
         }
     });
 
@@ -330,6 +345,8 @@ function handleLogin(e) {
     // Aceptar cualquier usuario y contraseña para propósitos de demostración
     if (currentRole === 'mmo') {
         loggedUser = { role: 'mmo', user: userVal, pass: passVal, name: 'Rodrigo Aguirre' };
+    } else if (currentRole === 'contratista') {
+        loggedUser = { role: 'contratista', user: userVal, pass: passVal, name: 'Constructora SRL', legajo: '4589/2026' };
     } else {
         loggedUser = { role: 'comitente', user: userVal, pass: passVal, name: 'Cliente Demo', legajo: '4589/2026' };
     }
@@ -343,12 +360,12 @@ function setupDashboard() {
     // Mostrar layout principal
     document.getElementById('sidebar').style.display = 'block';
     document.getElementById('header-right').style.display = 'flex';
-    
+
     // Configurar nombre y avatar de usuario
     const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(loggedUser.name)}&background=0284c7&color=fff&rounded=true`;
     document.getElementById('header-user-name').textContent = loggedUser.name.toUpperCase();
     document.getElementById('header-profile-pic').src = avatarUrl;
-    
+
     // Vista Perfil grande
     document.getElementById('perfil-img-large').src = avatarUrl;
     document.getElementById('perfil-nombre-large').textContent = loggedUser.name;
@@ -358,19 +375,28 @@ function setupDashboard() {
     if (loggedUser.role === 'mmo') {
         document.getElementById('nav-contratos').style.display = 'block';
         document.getElementById('nav-marco-legal').style.display = 'flex';
+        document.getElementById('nav-control-contratistas').style.display = 'flex';
     } else {
         document.getElementById('nav-contratos').style.display = 'none';
         document.getElementById('nav-marco-legal').style.display = 'none';
+        if (document.getElementById('nav-control-contratistas')) {
+            document.getElementById('nav-control-contratistas').style.display = 'none';
+        }
         // Ocultar botón nuevo legajo
         const btnNuevoLegajo = document.getElementById('btn-nuevo-legajo');
         if (btnNuevoLegajo) btnNuevoLegajo.style.display = 'none';
     }
 
-    // Activar la vista de expedientes por defecto
-    showSection('expedientes');
-
-    // Renderizar los expedientes
-    renderExpedientes();
+    if (loggedUser.role === 'contratista') {
+        document.getElementById('sidebar').style.display = 'none';
+        showSection('contratistaDashboard');
+        actualizarEstadoContratistaUI();
+    } else {
+        document.getElementById('sidebar').style.display = 'block';
+        showSection('expedientes');
+        renderExpedientes();
+        populateMonitoreoSelect();
+    }
 }
 
 // Renderizar Expedientes dinámicamente
@@ -478,21 +504,21 @@ async function handleActaSubmit(e) {
 
         const { jsPDF } = window.jspdf;
         const doc = new jsPDF();
-        
+
         let yPos = 20;
-        
+
         // Título Principal
         doc.setFontSize(16);
         doc.setFont("helvetica", "bold");
         doc.text(tipoActa, 105, yPos, { align: 'center' });
         yPos += 15;
-        
+
         // Datos de Obra
         doc.setFontSize(11);
         doc.setFont("helvetica", "bold");
         doc.text("Obra de referencia:", 20, yPos);
         yPos += 10;
-        
+
         doc.setFont("helvetica", "normal");
         doc.text(`Ubicación: ${calle}, ${localidad}`, 20, yPos);
         yPos += 8;
@@ -506,11 +532,11 @@ async function handleActaSubmit(e) {
         // Texto Genérico y Exacto según DOC-2021
         doc.setFont("helvetica", "normal");
         const fechaHoy = new Date().toLocaleDateString('es-AR');
-        
+
         let textoPrincipal = "";
         let lineasEspeciales = [];
-        
-        switch(tipoActa) {
+
+        switch (tipoActa) {
             case "ACTA DE INICIO DE OBRA":
                 textoPrincipal = `Por la presente y con el fin de establecer plazos y etapas de obra se define el día de la fecha como inicio de la obra de referencia.`;
                 break;
@@ -561,14 +587,14 @@ async function handleActaSubmit(e) {
         doc.setFontSize(9);
         doc.text("Aclaración:", 20, yPos + 10);
         doc.text("Doc N°:", 20, yPos + 15);
-        
+
         if (tipoActa !== "ACTA DE REPLANTEO" && tipoActa !== "ORDEN DE SERVICIO") {
             doc.line(80, yPos, 130, yPos);
             doc.text("Firma del Comitente", 85, yPos + 5);
             doc.text("Aclaración:", 80, yPos + 10);
             doc.text("Doc N°:", 80, yPos + 15);
         }
-        
+
         if (tipoActa !== "ACTA DE PARALIZACION DE OBRA" && tipoActa !== "ACTA DE DESLIGAMIENTO" && tipoActa !== "ACTA DE ESTADO DE OBRA" && tipoActa !== "ACTA DE PRORROGA DE CONTRATO") {
             let offset = (tipoActa === "ACTA DE REPLANTEO" || tipoActa === "ORDEN DE SERVICIO") ? 80 : 140;
             doc.line(offset, yPos, offset + 50, yPos);
@@ -807,6 +833,275 @@ async function handleContratoSubmit(e) {
         btnSubmit.disabled = false;
     }
 }
+
+// Poblar select de Monitoreo de Responsabilidad Civil
+function populateMonitoreoSelect() {
+    const select = document.getElementById('monitoreo-legajo');
+    if (!select) return;
+
+    select.innerHTML = '<option value="" disabled selected>Seleccione un legajo...</option>';
+
+    let expToShow = [];
+    if (loggedUser.role === 'mmo') {
+        expToShow = mockDB.expedientes;
+    } else {
+        expToShow = mockDB.expedientes.filter(e => e.legajo === loggedUser.pass || e.legajo === loggedUser.legajo);
+    }
+
+    expToShow.forEach(exp => {
+        const option = document.createElement('option');
+        option.value = exp.legajo;
+        option.textContent = `Exp. ${exp.legajo} - ${exp.lote}`;
+        select.appendChild(option);
+    });
+}
+
+// Lógica de Monitoreo Responsabilidad Civil
+const formMonitoreo = document.getElementById('form-monitoreo');
+if (formMonitoreo) {
+    formMonitoreo.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const legajo = document.getElementById('monitoreo-legajo').value;
+        const fechaAceptacionStr = document.getElementById('monitoreo-fecha').value;
+
+        if (!legajo || !fechaAceptacionStr) {
+            showToast("Por favor complete todos los campos.", "warning");
+            return;
+        }
+
+        // Parse date (yyyy-mm-dd format from input type="date")
+        const parts = fechaAceptacionStr.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1; // JS months are 0-indexed
+        const day = parseInt(parts[2], 10);
+
+        const fechaBase = new Date(year, month, day);
+
+        // Vicios Ocultos (60 días)
+        const fechaVicios = new Date(fechaBase);
+        fechaVicios.setDate(fechaVicios.getDate() + 60);
+
+        // Caducidad Sustantiva (3 años)
+        const fechaSustantiva = new Date(fechaBase);
+        fechaSustantiva.setFullYear(fechaSustantiva.getFullYear() + 3);
+
+        // Responsabilidad por Ruina (10 años)
+        const fechaRuina = new Date(fechaBase);
+        fechaRuina.setFullYear(fechaRuina.getFullYear() + 10);
+
+        // Format dates to display
+        const formatearFecha = (d) => d.toLocaleDateString('es-AR', { year: 'numeric', month: '2-digit', day: '2-digit' });
+
+        document.getElementById('fecha-vicios').textContent = formatearFecha(fechaVicios);
+        document.getElementById('fecha-sustantiva').textContent = formatearFecha(fechaSustantiva);
+        document.getElementById('fecha-ruina').textContent = formatearFecha(fechaRuina);
+
+        // Mostrar contenedor de alertas
+        document.getElementById('monitoreo-alertas-container').style.display = 'block';
+
+        // Persistir en mockDB
+        const expediente = mockDB.expedientes.find(e => e.legajo === legajo);
+        if (expediente) {
+            expediente.monitoreoLegal = {
+                fechaAceptacion: fechaAceptacionStr,
+                viciosOcultos: formatearFecha(fechaVicios),
+                caducidadSustantiva: formatearFecha(fechaSustantiva),
+                responsabilidadRuina: formatearFecha(fechaRuina)
+            };
+        }
+
+        showToast("Plazos legales calculados y vinculados al legajo.", "success");
+    });
+}
+
+// Botón Enviar Correos
+const btnEnviarCorreoAlertas = document.getElementById('btn-enviar-correo-alertas');
+if (btnEnviarCorreoAlertas) {
+    btnEnviarCorreoAlertas.addEventListener('click', () => {
+        showToast("Simulando envío de correo con las fechas de caducidad...", "success");
+        setTimeout(() => {
+            showToast("Alertas programadas y enviadas por correo exitosamente.", "success");
+        }, 1500);
+    });
+}
+
+// Al seleccionar un legajo, verificar si ya tiene datos guardados y mostrarlos
+const monitoreoLegajoSelect = document.getElementById('monitoreo-legajo');
+if (monitoreoLegajoSelect) {
+    monitoreoLegajoSelect.addEventListener('change', (e) => {
+        const legajo = e.target.value;
+        const expediente = mockDB.expedientes.find(exp => exp.legajo === legajo);
+
+        if (expediente && expediente.monitoreoLegal) {
+            document.getElementById('monitoreo-fecha').value = expediente.monitoreoLegal.fechaAceptacion;
+            document.getElementById('fecha-vicios').textContent = expediente.monitoreoLegal.viciosOcultos;
+            document.getElementById('fecha-sustantiva').textContent = expediente.monitoreoLegal.caducidadSustantiva;
+            document.getElementById('fecha-ruina').textContent = expediente.monitoreoLegal.responsabilidadRuina;
+            document.getElementById('monitoreo-alertas-container').style.display = 'block';
+            showToast("Fechas recuperadas del legajo.", "success");
+        } else {
+            document.getElementById('monitoreo-fecha').value = "";
+            document.getElementById('monitoreo-alertas-container').style.display = 'none';
+        }
+    });
+}
+
+// ----------------------------------------------------
+// PORTAL CONTRATISTAS (SAFE HARBOUR) LOGIC
+// ----------------------------------------------------
+
+function actualizarEstadoContratistaUI() {
+    const sub = mockDB.contratistas.find(s => s.id === loggedUser.user);
+    const badge = document.getElementById('sub-estado-badge');
+    const texto = document.getElementById('sub-estado-texto');
+    const btnSubmit = document.getElementById('btn-submit-subdocs');
+
+    if (sub) {
+        if (sub.estado === 'pendiente') {
+            badge.className = 'badge-status status-gris';
+            badge.textContent = 'Sin Documentación';
+            texto.textContent = 'Debe adjuntar la documentación para habilitar su participación en obra.';
+            btnSubmit.disabled = false;
+        } else if (sub.estado === 'revision') {
+            badge.className = 'badge-status status-amarillo';
+            badge.textContent = 'En Revisión';
+            texto.textContent = 'Documentación enviada. Pendiente de aprobación por el MMO.';
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-clock"></i> Pendiente de Revisión';
+        } else if (sub.estado === 'aprobado') {
+            badge.className = 'badge-status status-verde';
+            badge.textContent = 'Aprobado';
+            texto.textContent = 'Documentación en regla. Habilitado para trabajar en la obra.';
+            btnSubmit.disabled = true;
+            btnSubmit.innerHTML = '<i class="fa-solid fa-check"></i> Documentación Aprobada';
+        }
+    }
+}
+
+const formContratistaDocs = document.getElementById('form-contratista-docs');
+if (formContratistaDocs) {
+    formContratistaDocs.addEventListener('submit', (e) => {
+        e.preventDefault();
+        showToast("Enviando documentación de forma segura...", "success");
+
+        setTimeout(() => {
+            const sub = mockDB.contratistas.find(s => s.id === loggedUser.user);
+            if (sub) {
+                sub.estado = 'revision';
+                actualizarEstadoContratistaUI();
+                showToast("Documentación enviada. El MMO ha sido notificado.", "success");
+            }
+        }, 1000);
+    });
+}
+
+function renderControlContratistas() {
+    const container = document.getElementById('lista-contratistas-container');
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    if (mockDB.contratistas.length === 0) {
+        container.innerHTML = '<p class="text-muted">No hay contratistas vinculados a sus obras.</p>';
+        return;
+    }
+
+    mockDB.contratistas.forEach(sub => {
+        let accionesHtml = '';
+        if (sub.estado === 'revision') {
+            accionesHtml = `
+                <button class="btn-primary" onclick="aprobarContratista('${sub.id}')"><i class="fa-solid fa-check"></i> Aprobar Docs</button>
+            `;
+        } else if (sub.estado === 'aprobado') {
+            accionesHtml = `<span class="badge-status status-verde"><i class="fa-solid fa-shield-check"></i> Aprobado</span>`;
+        } else {
+            accionesHtml = `<span class="text-muted-small">Aguardando que el contratista suba los documentos.</span>`;
+        }
+
+        const div = document.createElement('div');
+        div.style.marginBottom = "15px";
+        div.style.padding = "15px";
+        div.style.border = "1px solid var(--border-light)";
+        div.style.borderRadius = "6px";
+        div.style.display = "flex";
+        div.style.justifyContent = "space-between";
+        div.style.alignItems = "center";
+
+        let colorBorde = sub.estado === 'aprobado' ? 'var(--success-color)' : (sub.estado === 'revision' ? 'var(--warning-color)' : 'var(--border-light)');
+        div.style.borderLeft = `4px solid ${colorBorde}`;
+
+        div.innerHTML = `
+            <div>
+                <h4 style="margin:0;">${sub.nombre} <span class="badge" style="font-size:0.7rem; margin-left:10px;">Exp. ${sub.legajo}</span></h4>
+                <p class="text-muted-small" style="margin-top:5px;">CUIT: ${sub.id}</p>
+            </div>
+            <div>
+                ${accionesHtml}
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Hook de navegación para MMO cuando entra al control de contratistas
+const navControlContratistas = document.getElementById('nav-control-contratistas');
+if (navControlContratistas) {
+    navControlContratistas.addEventListener('click', () => {
+        renderControlContratistas();
+    });
+}
+
+// Exponer funcion al scope global para el onclick
+window.aprobarContratista = function (subId) {
+    const sub = mockDB.contratistas.find(s => s.id === subId);
+    if (sub) {
+        sub.estado = 'aprobado';
+        showToast(`Documentación de ${sub.nombre} aprobada. El legajo ${sub.legajo} ha sido desbloqueado.`, "success");
+        renderControlContratistas();
+    }
+};
+
+function checkSafeHarbour() {
+    // Simulamos que estamos viendo el dashboard del legajo 4589/2026
+    const legajoActual = '4589/2026';
+    const contratistasDelLegajo = mockDB.contratistas.filter(s => s.legajo === legajoActual);
+
+    const btnCertificar = document.getElementById('btn-certificar-avance');
+    const alerta = document.getElementById('alerta-safe-harbour');
+
+    if (!btnCertificar || !alerta) return;
+
+    let bloqueado = false;
+    for (let sub of contratistasDelLegajo) {
+        if (sub.estado !== 'aprobado') {
+            bloqueado = true;
+            break;
+        }
+    }
+
+    if (bloqueado) {
+        btnCertificar.disabled = true;
+        btnCertificar.style.opacity = '0.5';
+        btnCertificar.style.cursor = 'not-allowed';
+        alerta.style.display = 'block';
+    } else {
+        btnCertificar.disabled = false;
+        btnCertificar.style.opacity = '1';
+        btnCertificar.style.cursor = 'pointer';
+        alerta.style.display = 'none';
+    }
+}
+
+// Evento simulado para el boton Certificar Avance
+document.addEventListener('click', (e) => {
+    if (e.target.closest('#btn-certificar-avance')) {
+        const btn = e.target.closest('#btn-certificar-avance');
+        if (!btn.disabled) {
+            showToast("Certificado de avance de obra generado y firmado.", "success");
+        }
+    }
+});
 
 // Iniciar aplicación
 document.addEventListener('DOMContentLoaded', initApp);
